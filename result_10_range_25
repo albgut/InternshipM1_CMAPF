@@ -1,0 +1,404 @@
+b-w-open_uniform_grid_13_range_25_10_38.log
+Diff = []
+True len = 59
+Exp len = 59
+True time = 0.180837
+Exp time = 0.3067272950002007
+Best time = True
+
+b-w-open_uniform_grid_13_range_25_10_30.log
+Diff = []
+True len = 0
+Exp len = 39
+True time = 483.957
+Exp time = 60.01085258999956
+Best time = Exp
+
+b-w-open_uniform_grid_13_range_25_10_16.log
+Diff = []
+True len = 0
+Exp len = 42
+True time = 377.697
+Exp time = 60.010714391000874
+Best time = Exp
+
+b-w-open_uniform_grid_13_range_25_10_8.log
+Diff = []
+True len = 57
+Exp len = 57
+True time = 0.188085
+Exp time = 1.8901712749993749
+Best time = True
+
+b-w-open_uniform_grid_13_range_25_10_39.log
+Diff = []
+True len = 0
+Exp len = 26
+True time = 557.525
+Exp time = 60.02856108499964
+Best time = Exp
+
+b-w-open_uniform_grid_13_range_25_10_45.log
+Diff = [(18, 5), (18, 9), (19, 5), (19, 9), (20, 9)]
+True len = 23
+Exp len = 23
+True time = 0.131396
+Exp time = 0.23483093800041388
+Best time = True
+
+b-w-open_uniform_grid_13_range_25_10_17.log
+Diff = []
+True len = 63
+Exp len = 63
+True time = 0.221417
+Exp time = 2.386486164999951
+Best time = True
+
+b-w-open_uniform_grid_13_range_25_10_3.log
+Diff = []
+True len = 63
+Exp len = 69
+True time = 0.294793
+Exp time = 17.659775332999743
+Best time = True
+
+b-w-open_uniform_grid_13_range_25_10_33.log
+Diff = []
+True len = 46
+Exp len = 46
+True time = 0.174188
+Exp time = 0.3183902370001306
+Best time = True
+
+b-w-open_uniform_grid_13_range_25_10_6.log
+Diff = [(26, 4), (26, 7)]
+True len = 32
+Exp len = 32
+True time = 2.54855
+Exp time = 0.21590583199940738
+Best time = Exp
+
+b-w-open_uniform_grid_13_range_25_10_7.log
+Diff = [(38, 7), (38, 8), (39, 7), (39, 8), (39, 9), (40, 6), (40, 7), (40, 8), (40, 9), (41, 8), (41, 9), (42, 8), (42, 9), (43, 8), (44, 8), (45, 8), (46, 8), (47, 8), (48, 8), (49, 8), (50, 8), (51, 8), (52, 8), (53, 8), (54, 8), (55, 8), (56, 8), (57, 8), (58, 8), (59, 8), (60, 8), (61, 8), (62, 8), (63, 8), (64, 8)]
+True len = 72
+Exp len = 72
+True time = 0.245391
+Exp time = 0.5588618929996301
+Best time = True
+
+b-w-open_uniform_grid_13_range_25_10_48.log
+Diff = []
+True len = 41
+Exp len = 41
+True time = 0.130903
+Exp time = 0.19104615700052818
+Best time = True
+
+b-w-open_uniform_grid_13_range_25_10_23.log
+Diff = []
+True len = 38
+Exp len = 38
+True time = 0.517843
+Exp time = 0.20873605900033
+Best time = Exp
+
+b-w-open_uniform_grid_13_range_25_10_27.log
+Diff = []
+True len = 57
+Exp len = 57
+True time = 0.290566
+Exp time = 2.0464595319999717
+Best time = True
+
+b-w-open_uniform_grid_13_range_25_10_10.log
+Diff = [(59, 8), (59, 9), (60, 8), (60, 9), (61, 9)]
+True len = 63
+Exp len = 63
+True time = 0.233843
+Exp time = 0.38421753300008277
+Best time = True
+
+b-w-open_uniform_grid_13_range_25_10_28.log
+Diff = [(25, 5), (25, 7), (26, 5), (26, 7), (27, 5), (27, 7), (28, 5), (28, 7), (29, 5), (29, 7), (30, 5), (30, 7), (31, 5), (31, 7), (32, 5), (32, 7), (33, 5), (33, 7), (34, 5), (34, 7), (35, 5), (35, 7), (36, 5), (36, 7), (37, 5), (37, 7), (38, 5), (38, 7), (39, 5), (39, 7), (40, 5), (40, 7), (41, 5), (41, 7), (42, 5), (42, 7), (43, 5), (43, 7), (44, 5), (44, 7), (45, 5), (45, 7), (46, 5), (46, 7), (47, 5), (47, 7), (47, 9), (48, 5), (48, 7), (48, 9), (49, 5), (49, 7), (49, 9), (50, 5), (50, 7), (50, 9), (51, 5), (51, 7), (51, 9), (52, 5), (52, 9), (53, 5), (53, 9), (54, 5)]
+True len = 56
+Exp len = 56
+True time = 0.53037
+Exp time = 0.38573766199988313
+Best time = Exp
+
+b-w-open_uniform_grid_13_range_25_10_34.log
+Diff = []
+True len = 42
+Exp len = 42
+True time = 0.206626
+Exp time = 0.1913874419997228
+Best time = Exp
+
+b-w-open_uniform_grid_13_range_25_10_21.log
+Diff = []
+True len = 31
+Exp len = 31
+True time = 0.189887
+Exp time = 0.14635150100002647
+Best time = Exp
+
+b-w-open_uniform_grid_13_range_25_10_26.log
+Diff = []
+True len = 25
+Exp len = 25
+True time = 5.34922
+Exp time = 0.15254271599951608
+Best time = Exp
+
+b-w-open_uniform_grid_13_range_25_10_19.log
+Diff = []
+True len = 0
+Exp len = 38
+True time = 423.231
+Exp time = 60.00260274199991
+Best time = Exp
+
+b-w-open_uniform_grid_13_range_25_10_0.log
+Diff = []
+True len = 38
+Exp len = 38
+True time = 0.142215
+Exp time = 0.809335099999771
+Best time = True
+
+b-w-open_uniform_grid_13_range_25_10_31.log
+Diff = []
+True len = 59
+Exp len = 59
+True time = 4.30079
+Exp time = 0.32651500400061195
+Best time = Exp
+
+b-w-open_uniform_grid_13_range_25_10_18.log
+Diff = []
+True len = 44
+Exp len = 44
+True time = 0.16087
+Exp time = 0.8311986740000066
+Best time = True
+
+b-w-open_uniform_grid_13_range_25_10_22.log
+Diff = []
+True len = 46
+Exp len = 46
+True time = 0.194149
+Exp time = 1.9072979020002094
+Best time = True
+
+b-w-open_uniform_grid_13_range_25_10_29.log
+Diff = [(49, 3), (49, 9), (50, 3), (50, 9), (51, 3), (51, 9), (52, 3), (52, 9), (53, 3), (53, 9), (54, 3), (54, 9), (55, 3), (55, 9), (56, 3), (56, 9), (57, 3), (57, 9), (58, 3), (58, 9), (59, 3), (59, 9), (60, 3), (60, 9)]
+True len = 69
+Exp len = 69
+True time = 0.487612
+Exp time = 0.5521189020000747
+Best time = True
+
+b-w-open_uniform_grid_13_range_25_10_2.log
+Diff = [(29, 1), (29, 8), (30, 1), (30, 9), (31, 1), (31, 9), (32, 1), (32, 4), (32, 9), (33, 9), (34, 9)]
+True len = 37
+Exp len = 37
+True time = 0.708634
+Exp time = 0.25173775700022816
+Best time = Exp
+
+b-w-open_uniform_grid_13_range_25_10_41.log
+Diff = []
+True len = 0
+Exp len = 74
+True time = 305.385
+Exp time = 60.00114928899984
+Best time = Exp
+
+b-w-open_uniform_grid_13_range_25_10_13.log
+Diff = []
+True len = 0
+Exp len = 42
+True time = 355.411
+Exp time = 60.000741507000384
+Best time = Exp
+
+b-w-open_uniform_grid_13_range_25_10_37.log
+Diff = []
+True len = 24
+Exp len = 24
+True time = 39.5242
+Exp time = 0.3194276450003599
+Best time = Exp
+
+b-w-open_uniform_grid_13_range_25_10_43.log
+Diff = [(6, 5), (6, 7), (6, 9), (7, 7), (7, 9), (8, 7), (8, 9), (9, 7), (9, 9), (10, 7), (10, 9), (11, 7), (11, 9), (12, 7), (12, 9), (13, 7), (13, 9), (14, 7), (14, 9), (15, 7), (15, 9), (16, 7), (16, 9), (17, 7), (17, 9), (18, 7), (18, 9), (19, 7), (19, 9), (20, 7), (20, 9), (21, 7), (21, 9), (22, 7), (22, 9), (23, 7), (23, 9), (24, 7), (24, 9), (25, 7), (25, 9), (26, 9), (27, 9), (28, 9)]
+True len = 31
+Exp len = 31
+True time = 0.178677
+Exp time = 0.1296606289997726
+Best time = Exp
+
+b-w-open_uniform_grid_13_range_25_10_44.log
+Diff = [(37, 5), (37, 7), (38, 7), (39, 7), (40, 7)]
+True len = 45
+Exp len = 45
+True time = 0.235354
+Exp time = 0.7821763310003007
+Best time = True
+
+b-w-open_uniform_grid_13_range_25_10_20.log
+Diff = []
+True len = 56
+Exp len = 56
+True time = 0.180866
+Exp time = 1.1380993839993607
+Best time = True
+
+b-w-open_uniform_grid_13_range_25_10_24.log
+Diff = []
+True len = 41
+Exp len = 48
+True time = 1.31527
+Exp time = 4.0609571930008315
+Best time = True
+
+b-w-open_uniform_grid_13_range_25_10_14.log
+Diff = []
+True len = 0
+Exp len = 86
+True time = 355.936
+Exp time = 26.89255606400002
+Best time = Exp
+
+b-w-open_uniform_grid_13_range_25_10_49.log
+Diff = []
+True len = 0
+Exp len = 66
+True time = 337.195
+Exp time = 60.001956375999725
+Best time = Exp
+
+b-w-open_uniform_grid_13_range_25_10_25.log
+Diff = []
+True len = 73
+Exp len = 72
+True time = 4.27412
+Exp time = 0.6617133620002278
+Best time = Exp
+
+b-w-open_uniform_grid_13_range_25_10_40.log
+Diff = []
+True len = 69
+Exp len = 69
+True time = 0.2477
+Exp time = 4.66078709500016
+Best time = True
+
+b-w-open_uniform_grid_13_range_25_10_12.log
+Diff = []
+True len = 0
+Exp len = 59
+True time = 367.626
+Exp time = 60.002874423999856
+Best time = Exp
+
+b-w-open_uniform_grid_13_range_25_10_47.log
+Diff = []
+True len = 26
+Exp len = 26
+True time = 0.107424
+Exp time = 0.13511405200006266
+Best time = True
+
+b-w-open_uniform_grid_13_range_25_10_9.log
+Diff = []
+True len = 39
+Exp len = 39
+True time = 0.145926
+Exp time = 0.24671461599973554
+Best time = True
+
+b-w-open_uniform_grid_13_range_25_10_11.log
+Diff = []
+True len = 44
+Exp len = 44
+True time = 0.575733
+Exp time = 0.24240280899994104
+Best time = Exp
+
+b-w-open_uniform_grid_13_range_25_10_15.log
+Diff = []
+True len = 0
+Exp len = 84
+True time = 349.527
+Exp time = 60.00701782499982
+Best time = Exp
+
+b-w-open_uniform_grid_13_range_25_10_4.log
+Diff = []
+True len = 55
+Exp len = 16
+True time = 4.91225
+Exp time = 60.051642758000526
+Best time = True
+
+b-w-open_uniform_grid_13_range_25_10_32.log
+Diff = []
+True len = 30
+Exp len = 30
+True time = 0.187388
+Exp time = 0.34461774900046294
+Best time = True
+
+b-w-open_uniform_grid_13_range_25_10_35.log
+Diff = []
+True len = 71
+Exp len = 70
+True time = 0.766433
+Exp time = 0.5290930840001238
+Best time = Exp
+
+b-w-open_uniform_grid_13_range_25_10_5.log
+Diff = []
+True len = 0
+Exp len = 22
+True time = 320.414
+Exp time = 60.03022295700066
+Best time = Exp
+
+b-w-open_uniform_grid_13_range_25_10_46.log
+Diff = []
+True len = 54
+Exp len = 54
+True time = 3.03539
+Exp time = 3.1481794639994405
+Best time = True
+
+b-w-open_uniform_grid_13_range_25_10_1.log
+Diff = [(17, 4), (17, 6), (18, 4), (18, 6), (19, 4), (19, 6), (20, 4), (20, 6), (21, 4), (21, 6), (22, 4), (22, 6), (23, 4), (23, 6), (24, 4), (24, 6), (25, 4), (25, 6), (26, 4), (26, 6), (27, 4), (27, 6), (28, 4), (28, 6), (29, 4), (29, 6), (30, 4), (30, 6), (30, 7), (31, 4), (31, 6), (31, 7), (32, 4), (32, 6), (32, 7), (33, 4), (34, 4), (35, 4), (35, 7)]
+True len = 40
+Exp len = 40
+True time = 1.36746
+Exp time = 0.19875811400015664
+Best time = Exp
+
+b-w-open_uniform_grid_13_range_25_10_42.log
+Diff = [(17, 4), (17, 7), (17, 8), (18, 4), (18, 7), (18, 8), (19, 4), (19, 7), (19, 8), (20, 4), (20, 7), (20, 8), (21, 4), (21, 7), (21, 8), (22, 4), (22, 7), (22, 8), (23, 4), (23, 7), (23, 8), (24, 4), (24, 7), (24, 8), (25, 4), (25, 7), (25, 8), (26, 4), (26, 6), (26, 7), (26, 8), (26, 9), (27, 4), (27, 6), (27, 7), (27, 8), (27, 9), (28, 4), (28, 6), (28, 7), (28, 8), (28, 9), (29, 4), (29, 6), (29, 7), (29, 8), (29, 9), (30, 4), (30, 6), (30, 7), (30, 8), (30, 9), (31, 4), (31, 6), (31, 7), (31, 8), (31, 9), (32, 4), (32, 6), (32, 7), (32, 8), (32, 9), (33, 7), (33, 8), (33, 9), (34, 7), (34, 8), (34, 9), (35, 7), (35, 8), (35, 9), (36, 7)]
+True len = 38
+Exp len = 38
+True time = 0.429958
+Exp time = 0.8702478720006184
+Best time = True
+
+b-w-open_uniform_grid_13_range_25_10_36.log
+Diff = []
+True len = 64
+Exp len = 64
+True time = 0.247352
+Exp time = 2.882336602000578
+Best time = True
+
+Average True = 86.18127372000001
+Average Exp = 14.786940178360055
+Number of best time for True = 25
+Number of best time for Exp = 25

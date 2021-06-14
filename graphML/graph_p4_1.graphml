@@ -1,0 +1,68 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<graphml xmlns="http://graphml.graphdrawing.org/xmlns"  
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://graphml.graphdrawing.org/xmlns
+     http://graphml.graphdrawing.org/xmlns/1.0/graphml.xsd">
+     <key id="k0" for="edge" attr.name="deterministic" attr.type="boolean"/>
+     <key id="k1" for="edge" attr.name="proba" attr.type="double"/>
+      <key id="v_y_coord" for="node" attr.name="y_coord" attr.type="double"/>
+      <key id="v_x_coord" for="node" attr.name="x_coord" attr.type="double"/>
+  <graph id="0" edgedefault="undirected">
+    <node id="n1">
+      <data key="v_y_coord">0</data>
+      <data key="v_x_coord">0</data>
+    </node>
+    <node id="n2">
+      <data key="v_y_coord">1</data>
+      <data key="v_x_coord">0</data>
+    </node>
+    <node id="n3">
+      <data key="v_y_coord">2</data>
+      <data key="v_x_coord">0</data>
+    </node>
+    <node id="n4">
+      <data key="v_y_coord">1</data>
+      <data key="v_x_coord">1</data>
+    </node>
+    <node id="n5">
+      <data key="v_y_coord">2</data>
+      <data key="v_x_coord">1</data>
+    </node>
+    <node id="n6">
+      <data key="v_y_coord">0</data>
+      <data key="v_x_coord">1</data>
+    </node>
+    <node id="n7">
+      <data key="v_y_coord">0</data>
+      <data key="v_x_coord">2</data>
+    </node>
+    <edge source="n1" target="n2">
+      <data key="k0">true</data>
+      <data key="k1">0</data>
+    </edge>
+    <edge source="n2" target="n3">
+      <data key="k0">true</data>
+      <data key="k1">0</data>
+    </edge>
+    <edge source="n2" target="n4">
+      <data key="k0">true</data>
+      <data key="k1">0</data>
+    </edge>
+    <edge source="n3" target="n5">
+      <data key="k0">false</data>
+     <data key="k1">0.9</data>
+    </edge>
+    <edge source="n4" target="n5">
+      <data key="k0">false</data>
+      <data key="k1">0.2</data>
+    </edge>
+    <edge source="n4" target="n6">
+      <data key="k0">true</data>
+      <data key="k1">0</data>
+    </edge>
+    <edge source="n6" target="n7">
+      <data key="k0">true</data>
+      <data key="k1">0</data>
+    </edge>
+  </graph>
+</graphml>
