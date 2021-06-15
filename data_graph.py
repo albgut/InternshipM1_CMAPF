@@ -93,6 +93,11 @@ class Data:
     def init_distance(self):
         self.matrix_distance = [[None for i in range(len(self.agent_graph.vs))] 
                                 for j in range(len(self.agent_graph.vs))]
+    """
+    Clear all the distance in the matrix distance
+    """   
+    def clear_distance(self):
+        self.init_distance()
     
     """
     Get the distance in fonction of the attribute heuristic of the data

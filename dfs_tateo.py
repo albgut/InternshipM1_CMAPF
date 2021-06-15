@@ -49,7 +49,8 @@ def find_best_child(data, current_config, closed, start_time):
                      )
     heappush(heap, item)
     while not heap == [] and not time_out(start_time):
-        (current_g, _, partial_config) = heappop(heap).item
+        next_partial = heappop(heap)
+        (current_g, _, partial_config) = next_partial.item
         num_agent = partial_config.nb_agent
         if num_agent == nb_total_agents:
             if isConnected(data, partial_config) \
@@ -64,7 +65,7 @@ def find_best_child(data, current_config, closed, start_time):
             for node in successors:
                 new_config = partial_config.copy()
                 new_config.add_agent(node)
-                g_cost = current_g + data.get_distance(
+                g_cost = current_g + data.euclidean_distance(
                     current_config.get_agent_pos(num_agent), node)
                 h_cost = compute_h(data, current_config, new_config)
                 if not h_cost == m.inf and not g_cost == m.inf:
@@ -134,6 +135,7 @@ def update_graph(data, current_config, closed):
         data.agent_graph.delete_edges(edge_to_delete)
     if graph_change:
         closed.clear()
+        data.clear_distance()
 
 
 """

@@ -28,7 +28,7 @@ def a_star(data, start_node, end_node):
                     dist_curr_to_neigh = data.euclidean_distance(node, 
                                                                  neighbor)
                     new_g_cost = g + dist_curr_to_neigh
-                    new_h_cost = data.euclidean_distance(node, end_node)
+                    new_h_cost = data.euclidean_distance(neighbor, end_node)
                     new_f_cost = new_g_cost + new_h_cost
                     open_neighbor = find_in_open(open_heap, neighbor)
                     if not open_neighbor == None:
@@ -46,6 +46,8 @@ def a_star(data, start_node, end_node):
     
 def find_in_open(open_heap, node):
     for i in range(len(open_heap)):
-        if open_heap[i][1] == node:
-            return open_heap.pop(i)
+        (_, node_heap) = open_heap[i]
+        if node_heap == node:
+            item_heap = open_heap.pop(i)
+            return item_heap
     return None

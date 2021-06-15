@@ -14,13 +14,15 @@ from grid_generation import *
 from configuration import *
 
 def test_repeated_online():
-    g = Grid(5, 5)
+    g = Grid(20, 20)
     movement_graph = g.graphe_m
-    comm_graph = ig.Graph.Full(n=25)
-    config_start = Configuration([1, 2])
-    config_end = Configuration([22, 23])
+    comm_graph = ig.Graph.Full(n=400)
+    config_start = Configuration([0, 1, 2, 3, 4, 5])
+    config_end = Configuration([399, 398, 397, 396, 395, 394])
     data1 = Data(movement_graph, comm_graph, config_start, config_end, "astar")
     data2 = data1.copy()
+    data3 = data1.copy()
+    print("ALL DATA COMPUTED")
     t_start = t.perf_counter()
     path_repeated_tateo = repeated_tateo(data1)
     t_end = t.perf_counter()
@@ -35,7 +37,8 @@ def test_repeated_online():
     print_result(t_online, path_online)
     print(data1.deterministic_graph)
     assert(data1.deterministic_graph.get_edgelist() == data2.deterministic_graph.get_edgelist())
-        
+    assert(len(path_online) == len(path_repeated_tateo))    
+
 def print_result(time, path):
     print("time = ", time)
     if not isinstance(path, type(None)):
@@ -47,3 +50,4 @@ def print_result(time, path):
 
 if __name__ == "__main__":
     test_repeated_online()
+    
