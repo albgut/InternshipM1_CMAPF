@@ -65,9 +65,10 @@ def find_best_child(data, current_config, closed, start_time):
                 g_cost = current_g + data.get_distance(
                     current_config.get_agent_pos(num_agent), node)
                 h_cost = compute_h(data, current_config, new_config)
-                item = Heap_item((h_cost + g_cost, -g_cost, new_config), 
-                                 (g_cost, h_cost, new_config.copy()))
-                heappush(heap, item)
+                if not h_cost == m.inf and not g_cost == m.inf:
+                    item = Heap_item((h_cost + g_cost, -g_cost, new_config), 
+                                     (g_cost, h_cost, new_config.copy()))
+                    heappush(heap, item)
     return Configuration([])
 
 """
@@ -110,9 +111,11 @@ def find_best_child_avt(data, current_config, closed, start_time):
 Return all the next possible position from the current node
 """            
 def get_successors(data, current_node):
-    next_positions = data.deterministic_graph.neighbors(current_node)
+    next_positions = data.agent_graph.neighbors(current_node)
     next_positions.append(current_node)
     return next_positions
+
+
         
 
 """
@@ -171,6 +174,21 @@ if __name__ == "__main__":
     g_c = ig.Graph()
     g_c.add_vertices(14)
     g_m = ig.Graph.Full(n=14)
-    data = Data(g_m, g_c, Configuration([1,2]), Configuration([10, 13]), "OMT")
+    data = Data(g_m, g_c, Configuration([1,2]), Configuration([10, 13]), "astar")
     config = Configuration([4, 9])
     print(isConnected(data, config))
+    
+    g_m = ig.Graph([(0, 1), (0, 3), (0, 2), (1, 3), (2, 4)])
+    g_m.vs["x_coord"] = [0, 1, 0, 1, 0]
+    g_m.vs["y_coord"] = [0, 0, 1, 1, 2]
+    g_m.es["proba"] = [0.0, 0.7, 0.7, 0.0, 0.5]
+    g_c = ig.Graph.Full(n=4)
+    config_start = Configuration([1, 2])
+    config_end = Configuration([0, 3])
+    heuristic = "astar"
+    d = Data(g_m, g_c, config_start, config_end, heuristic)
+    d.agent_graph.es[1]["proba"] = 1
+    
+    print("graph : ", d.deterministic_graph)
+    print("graph : ", d.agent_graph, "\nPROBA \n", d.agent_graph.es["proba"])
+    path = DFS_tateo(d)

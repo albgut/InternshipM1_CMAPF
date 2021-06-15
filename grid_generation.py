@@ -37,12 +37,10 @@ class Grid:
         self.generate_random(edge_id)
         
     def generate_random(self, edge_id):
-        if r.random() < 0.25:
-            self.graphe_m.es[edge_id]["deterministic"] = False
+        if r.random() < 0.5:
             rand = r.randint(1, 9)
             self.graphe_m.es[edge_id]["proba"] = round(rand * 0.1, 1)
         else:
-            self.graphe_m.es[edge_id]["deterministic"] = True
             self.graphe_m.es[edge_id]["proba"] = 0.0
                     
     def print_grid(self):

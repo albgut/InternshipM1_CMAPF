@@ -39,15 +39,35 @@ class Data:
         self.init_distance()
         
     """
-    Return True iff the edge is present in the deterministic graph, 
+    Return the sama object data but with a different starting 
+    configuration.
+    """
+    def new_start(self, new_start_config):
+        self.config_start = new_start_config
+        
+    """
+    Copy the values of data without generate randomness again.
+    """
+    def copy(self):
+        new_data = Data(ig.Graph(), ig.Graph(), self.config_start, 
+                        self.config_end, self.heuristic)
+        new_data.agent_graph = self.agent_graph.copy()
+        new_data.comm_graph = self.comm_graph.copy()
+        new_data.deterministic_graph = self.deterministic_graph.copy()
+        return new_data
+        
+    """
+    Return True iff the edge between node_1 and node_2 is present in the 
+    deterministic graph or if node_1 = node_2, 
     False otherwise.
     """
     def edge_present(self, node_1, node_2):
-        present = self.deterministic_graph.get_eids(pairs=(node_1, node_2), 
-                                                    error=False)
-        return not present == -1
+        present = self.deterministic_graph.get_eid(node_1, node_2, error=False)
+        return node_1 == node_2 or not present == -1
         
-        
+    """
+    Give the attribute "proba" to the edges of the graph if not present
+    """  
     def make_proba(self, graphe):
         if not "proba" in graphe.es.attribute_names():
             graphe.es["proba"] = [0.0] * len(graphe.es)
@@ -71,7 +91,10 @@ class Data:
     def init_distance(self):
         self.matrix_distance = [[None for i in range(len(self.agent_graph.vs))] 
                                 for j in range(len(self.agent_graph.vs))]
-        
+    
+    """
+    Get the distance in fonction of the attribute heuristic of the data
+    """
     def get_distance(self, node_1, node_2):
         #To compute only the upper part of the matrix
         if node_1 > node_2:
@@ -83,9 +106,13 @@ class Data:
                 self.matrix_distance[node_1][node_2] = self.euclidean_distance(
                     node_1, node_2)
             if self.heuristic == "astar":
-                a_star(self, node_1, node_2)
+                if a_star(self, node_1, node_2) == 0:
+                    return m.inf
         return self.matrix_distance[node_1][node_2]
     
+    """
+    Add a new distance to the data. Used in astar algorithm.
+    """
     def add_distance(self, node_1, node_2, cost):
         #To compute only the upper part of the matrix
         if node_1 > node_2:
@@ -144,3 +171,4 @@ if __name__ == "__main__":
     print(d.get_distance(3, 0))
     print(d.get_distance(0, 3))
     print(d.matrix_distance)
+    print(d.edge_present(0, 3))

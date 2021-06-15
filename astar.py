@@ -3,7 +3,10 @@ from heapq import *
 
 import data_graph
 
-
+"""
+Update the distance in the matrix distance in the data object.
+return 1 if a path was found 0 otherwise.
+"""
 def a_star(data, start_node, end_node):
     graphe = data.agent_graph
     open_heap = []
@@ -24,10 +27,6 @@ def a_star(data, start_node, end_node):
                 if not neighbor in closed_set:
                     dist_curr_to_neigh = data.euclidean_distance(node, 
                                                                  neighbor)
-                    """
-                    info_graph.add_distance(current[1], neighbor, 
-                                            dist_curr_to_neigh)
-                    """
                     new_g_cost = g + dist_curr_to_neigh
                     new_h_cost = data.euclidean_distance(node, end_node)
                     new_f_cost = new_g_cost + new_h_cost
