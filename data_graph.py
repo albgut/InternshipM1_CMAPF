@@ -49,7 +49,9 @@ class Data:
     Copy the values of data without generate randomness again.
     """
     def copy(self):
-        new_data = Data(ig.Graph(), ig.Graph(), self.config_start, 
+        new_data = Data(ig.Graph(n=len(self.agent_graph.vs)), 
+                        ig.Graph(), 
+                        self.config_start, 
                         self.config_end, self.heuristic)
         new_data.agent_graph = self.agent_graph.copy()
         new_data.comm_graph = self.comm_graph.copy()

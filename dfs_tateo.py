@@ -123,6 +123,7 @@ Update the knowledge of the graph for the agent from a current configuration
 The incomming edges that are not present in the deterministic graph are deleted
 """            
 def update_graph(data, current_config, closed):
+    graph_change = False
     for agent in range(current_config.nb_agent):
         node = current_config.get_agent_pos(agent)
         edge_to_delete = []
@@ -208,4 +209,3 @@ if __name__ == "__main__":
     
     print("graph : ", d.deterministic_graph)
     print("graph : ", d.agent_graph, "\nPROBA \n", d.agent_graph.es["proba"])
-    path = DFS_tateo(d)

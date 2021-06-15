@@ -19,13 +19,10 @@ Restart if blocked.
 """
 
 def repeated_tateo(data):
-    path = DFS_tateo(data)
+    path = DFS_tateo(data, False)
     if isinstance(path, type(None)):
         #No path found
         return None
-    print("new path")
-    for c in path:
-        print(c)
     final_path = []
     block = False
     
@@ -48,12 +45,7 @@ def repeated_tateo(data):
         
     if block:
         new_start_config = final_path.pop(-1)
-        print("new start")
-        print(new_start_config)
         data.new_start(new_start_config)
-        print("FINAL EN COURS")
-        for c in final_path:
-            print(c)
         next_path = repeated_tateo(data)
         if isinstance(path, type(None)):
             return None
