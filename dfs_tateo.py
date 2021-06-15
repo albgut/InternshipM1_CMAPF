@@ -18,12 +18,14 @@ from heap_item import *
 Depth-First Search from tateo in partially known environment
 data is a Data object with all infos about the instance
 """
-def DFS_tateo(data):
+def DFS_tateo(data, online):
     start_time = t.perf_counter()
     path = [data.config_start]
     closed = Closed_tree()
     while not path == [] and not time_out(start_time):
         current_config = path[-1]
+        if online:
+            update_graph(data, current_config, closed)
         closed.add_configuration(current_config)
         if current_config.same(data.config_end):
             return path
@@ -113,7 +115,22 @@ def get_successors(data, current_node):
     next_positions = data.deterministic_graph.neighbors(current_node)
     next_positions.append(current_node)
     return next_positions
-        
+
+"""
+Update the knowledge of the graph for the agent from a current configuration
+The incomming edges that are not present in the deterministic graph are deleted
+"""            
+def update_graph(data, current_config, closed):
+    for agent in range(current_config.nb_agent):
+        node = current_config.get_agent_pos(agent)
+        edge_to_delete = []
+        for neighbor in data.agent_graph.neighbors(node):
+            if not data.edge_present(node, neighbor):
+                graph_change = True
+                edge_to_delete.append(data.agent_graph.get_eid(node, neighbor))
+        data.agent_graph.delete_edges(edge_to_delete)
+    if graph_change:
+        closed.clear()
 
 """
 Use to stop the program if it take to many times to compute.
@@ -171,6 +188,6 @@ if __name__ == "__main__":
     g_c = ig.Graph()
     g_c.add_vertices(14)
     g_m = ig.Graph.Full(n=14)
-    data = Data(g_m, g_c, Configuration([1,2]), Configuration([10, 13]), "OMT")
+    data = Data(g_m, g_c, Configuration([1,2]), Configuration([10, 13]), "astar")
     config = Configuration([4, 9])
     print(isConnected(data, config))
