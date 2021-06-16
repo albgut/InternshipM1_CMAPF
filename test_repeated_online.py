@@ -14,11 +14,11 @@ from grid_generation import *
 from configuration import *
 
 def test_repeated_online():
-    g = Grid(20, 20)
+    g = Grid(10, 10)
     movement_graph = g.graphe_m
-    comm_graph = ig.Graph.Full(n=400)
+    comm_graph = ig.Graph.Full(n=100)
     config_start = Configuration([0, 1, 2, 3, 4, 5])
-    config_end = Configuration([399, 398, 397, 396, 395, 394])
+    config_end = Configuration([99, 98, 97, 96, 95, 94])
     data1 = Data(movement_graph, comm_graph, config_start, config_end, "astar")
     data2 = data1.copy()
     data3 = data1.copy()
@@ -35,9 +35,10 @@ def test_repeated_online():
     t_online = t_end - t_start
     print("result from online :")
     print_result(t_online, path_online)
-    print(data1.deterministic_graph)
     assert(data1.deterministic_graph.get_edgelist() == data2.deterministic_graph.get_edgelist())
-    assert(len(path_online) == len(path_repeated_tateo))    
+    assert(len(path_online) == len(path_repeated_tateo))
+    print()
+    data1.print_grid()
 
 def print_result(time, path):
     print("time = ", time)

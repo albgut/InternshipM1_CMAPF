@@ -29,21 +29,7 @@ class Grid:
                         self.generate_edge(i - 1, j + 1, current_node_id)
                 if j != h - 1:
                     self.generate_edge(i, j + 1, current_node_id)
-        """
-        for i in range(h):
-            for j in range(w):
-                current_node_id = self.get_num_vertice(i, j)
-                self.graphe_m.vs[current_node_id]["x_coord"] = j
-                self.graphe_m.vs[current_node_id]["y_coord"] = i
-                if not i == 0:
-                    self.generate_edge(i - 1, j, current_node_id)
-                    if not j == 0:
-                        self.generate_edge(i - 1, j - 1, current_node_id)
-                    if not j == w - 1:
-                        self.generate_edge(i - 1, j + 1, current_node_id)
-                if not j == w - 1:
-                    self.generate_edge(i, j + 1, current_node_id)
-        """
+                    
                     
     def generate_edge(self, i, j, source):
         target = self.get_num_vertice(i, j)

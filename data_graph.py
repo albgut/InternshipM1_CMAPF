@@ -141,6 +141,63 @@ class Data:
     """
     
     """
+    Print a squared grid from the deterministic graph in the terminal.
+    Do not use it with other graphs
+    """
+    def print_grid(self):
+        nb_squared = len(self.deterministic_graph.vs)
+        h = int(m.sqrt(len(self.deterministic_graph.vs)))
+        tmp = nb_squared - 1
+        taille_max = len(str(tmp))
+        for j in range(2 * h -1):
+            line = ""
+            for i in range(2 * h - 1):
+                if j % 2 == 0:
+                    if i % 2 == 0:
+                        index_node = int(j/2) * h + int(i/2)
+                        s_node = str(index_node)
+                        while len(s_node) < taille_max:
+                            s_node += " "
+                        line += s_node
+                    else:
+                        node_1 = int(j/2) * h + int((i - 1)/2)
+                        node_2 = node_1 + 1
+                        if self.edge_present(node_1, node_2):
+                            line += "--"
+                        else:
+                            line += "  "
+                else:
+                    if i % 2 == 0:
+                        node_1 = int((j - 1) / 2) * h + int(i / 2)
+                        node_2 = int((j + 1) / 2) * h + int(i / 2)
+                        if self.edge_present(node_1, node_2):
+                            s = "|"
+                        else:
+                            s = " "
+                        while len(s) < taille_max:
+                            s += " "
+                        line += s
+                    else:
+                        node_1 = int((j - 1) / 2) * h + int((i - 1) / 2)
+                        node_2 = int((j + 1) / 2) * h + int((i + 1) / 2)
+                        if self.edge_present(node_1, node_2):
+                            node_1 = int((j - 1) / 2) * h + int((i + 1) / 2)
+                            node_2 = int((j + 1) / 2) * h + int((i - 1) / 2)
+                            if self.edge_present(node_1, node_2):
+                                s = "X "
+                            else:
+                                s = "\\ "
+                        else:
+                            node_1 = int((j - 1) / 2) * h + int((i + 1) / 2)
+                            node_2 = int((j + 1) / 2) * h + int((i - 1) / 2)
+                            if self.edge_present(node_1, node_2):
+                                s = "/ "
+                            else:
+                                s = "  "
+                        line += s
+            print(line)
+    
+    """
     Return the euclidean distance between two point.
     pre two node index from the graph
     post euclidean distance
