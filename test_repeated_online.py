@@ -13,12 +13,15 @@ from dfs_tateo import *
 from grid_generation import *
 from configuration import *
 
-def test_repeated_online():
-    g = Grid(10, 10)
+def test_repeated_online(grid_length):
+    g = Grid(grid_length, grid_length)
     movement_graph = g.graphe_m
-    comm_graph = ig.Graph.Full(n=100)
+    nb_vertices = grid_length ** 2
+    comm_graph = ig.Graph.Full(n=nb_vertices)
     config_start = Configuration([0, 1, 2, 3, 4, 5])
-    config_end = Configuration([99, 98, 97, 96, 95, 94])
+    config_end = Configuration([nb_vertices - 1, nb_vertices - 2, 
+                                nb_vertices - 3, nb_vertices - 4, 
+                                nb_vertices - 5, nb_vertices - 6])
     data1 = Instance(movement_graph, comm_graph, config_start, config_end, "astar")
     data2 = data1.copy()
     data3 = data1.copy()
@@ -50,5 +53,5 @@ def print_result(time, path):
         print("No path found")
 
 if __name__ == "__main__":
-    test_repeated_online()
+    test_repeated_online(10)
     
