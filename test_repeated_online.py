@@ -19,7 +19,7 @@ def test_repeated_online():
     comm_graph = ig.Graph.Full(n=100)
     config_start = Configuration([0, 1, 2, 3, 4, 5])
     config_end = Configuration([99, 98, 97, 96, 95, 94])
-    data1 = Data(movement_graph, comm_graph, config_start, config_end, "astar")
+    data1 = Instance(movement_graph, comm_graph, config_start, config_end, "astar")
     data2 = data1.copy()
     data3 = data1.copy()
     print("ALL DATA COMPUTED")

@@ -16,7 +16,7 @@ from heap_item import *
 
 """
 Depth-First Search from tateo in partially known environment
-data is a Data object with all infos about the instance
+data is a Instance object with all infos about the instance
 """
 def DFS_tateo(data, online):
     start_time = t.perf_counter()
@@ -194,7 +194,7 @@ if __name__ == "__main__":
     g_c = ig.Graph()
     g_c.add_vertices(14)
     g_m = ig.Graph.Full(n=14)
-    data = Data(g_m, g_c, Configuration([1,2]), Configuration([10, 13]), "astar")
+    data = Instance(g_m, g_c, Configuration([1,2]), Configuration([10, 13]), "astar")
     config = Configuration([4, 9])
     print(isConnected(data, config))
     
@@ -206,7 +206,7 @@ if __name__ == "__main__":
     config_start = Configuration([1, 2])
     config_end = Configuration([0, 3])
     heuristic = "astar"
-    d = Data(g_m, g_c, config_start, config_end, heuristic)
+    d = Instance(g_m, g_c, config_start, config_end, heuristic)
     d.agent_graph.es[1]["proba"] = 1
     
     print("graph : ", d.deterministic_graph)

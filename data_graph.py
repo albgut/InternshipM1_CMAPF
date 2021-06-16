@@ -23,7 +23,7 @@ A class to represent all the data of the problem :
     - The ending configuration.
     - The heuristic used.
 """
-class Data:
+class Instance:
     
     def __init__(self, movement_graph, comm_graph, 
                  config_start, config_end, heuristic):
@@ -39,17 +39,17 @@ class Data:
         self.init_distance()
         
     """
-    Return the sama object data but with a different starting 
+    Return the sama object instance but with a different starting 
     configuration.
     """
     def new_start(self, new_start_config):
         self.config_start = new_start_config
         
     """
-    Copy the values of data without generate randomness again.
+    Copy the values of the instance without generate randomness again.
     """
     def copy(self):
-        new_data = Data(ig.Graph(n=len(self.agent_graph.vs)), 
+        new_data = Instance(ig.Graph(n=len(self.agent_graph.vs)), 
                         ig.Graph(), 
                         self.config_start, 
                         self.config_end, self.heuristic)
@@ -100,7 +100,7 @@ class Data:
         self.init_distance()
     
     """
-    Get the distance in fonction of the attribute heuristic of the data
+    Get the distance in fonction of the attribute heuristic of the instance
     """
     def get_distance(self, node_1, node_2):
         #To compute only the upper part of the matrix
@@ -118,7 +118,7 @@ class Data:
         return self.matrix_distance[node_1][node_2]
     
     """
-    Add a new distance to the data. Used in astar algorithm.
+    Add a new distance to the instance. Used in astar algorithm.
     """
     def add_distance(self, node_1, node_2, cost):
         #To compute only the upper part of the matrix
@@ -228,7 +228,7 @@ if __name__ == "__main__":
     config_start = Configuration([1, 2])
     config_end = Configuration([0, 3])
     heuristic = "astar"
-    d = Data(g_m, g_c, config_start, config_end, heuristic)
+    d = Instance(g_m, g_c, config_start, config_end, heuristic)
     print("graph : ", d.deterministic_graph)
     print(g_m)
     print(d.get_distance(3, 2))

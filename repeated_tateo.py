@@ -70,7 +70,7 @@ if __name__ == "__main__":
     g_m = Grid(10, 10)
     g_c = ig.Graph.Full(n=100)
 
-    data = Data(g_m.graphe_m, g_c, Configuration([2, 3]), 
+    data = Instance(g_m.graphe_m, g_c, Configuration([2, 3]), 
                 Configuration([94, 96]), "astar")
     path = repeated_tateo(data)
     print(data.deterministic_graph)

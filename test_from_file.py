@@ -52,7 +52,7 @@ def treat_file(path, file_name, log_dir):
             print("error in file ")
             sys.exit()
     graph = (g_m, g_c)
-    data = Data(g_m, g_c, config_start, config_end, "astar")
+    data = Instance(g_m, g_c, config_start, config_end, "astar")
     time_start = t.perf_counter()
     res_path = DFS_tateo(data, False)
     time_end = t.perf_counter()
