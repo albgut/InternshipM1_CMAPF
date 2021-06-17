@@ -25,9 +25,9 @@ def a_star(data, start_node, end_node):
             edge_id = graphe.get_eid(node, neighbor)
             #if not graphe.es[edge_id]["proba"] == 1:
             if not neighbor in closed_set:
-                dist_curr_to_neigh = data.euclidean_distance(node, 
-                                                             neighbor)
-                new_g_cost = g + dist_curr_to_neigh
+                #dist_curr_to_neigh = data.euclidean_distance(node, 
+                #                                             neighbor)
+                new_g_cost = g + 1
                 new_h_cost = data.euclidean_distance(neighbor, end_node)
                 new_f_cost = new_g_cost + new_h_cost
                 open_neighbor = find_in_open(open_heap, neighbor)

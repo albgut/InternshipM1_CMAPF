@@ -49,14 +49,14 @@ def test_repeated_online(grid_length):
     print("result from online :")
     print_result(t_online, path_online)
     
-    """
+    
     t_start = t.perf_counter()
     path_dfs = DFS_tateo(data3, False)
     t_end = t.perf_counter()
     t_online = t_end - t_start
     print("result from dfs :")
     print_result(t_online, path_dfs)
-    """
+    
     
     assert(data1.deterministic_graph.get_edgelist() == 
            data2.deterministic_graph.get_edgelist())
@@ -65,6 +65,7 @@ def test_repeated_online(grid_length):
     print("seed = ", data1.seed)
     print()
     data1.print_grid()
+    assert(len(path_online) == len(path_repeated_tateo))
 
 def print_result(time, path):
     print("time = ", time)

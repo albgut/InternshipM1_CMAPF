@@ -82,7 +82,9 @@ def find_best_child(data, current_config, closed, start_time):
             for node in successors:
                 new_config = partial_config.copy()
                 new_config.add_agent(node)
-                g_cost = current_g + data.euclidean_distance(
+                #g_cost = current_g + data.euclidean_distance(
+                #    current_config.get_agent_pos(num_agent), node)
+                g_cost = current_g + compute_distance(
                     current_config.get_agent_pos(num_agent), node)
                 h_cost = compute_h(data, current_config, new_config)
                 """
@@ -131,6 +133,15 @@ def find_best_child_avt(data, current_config, closed, start_time):
                 heappush(heap, item)
     return Configuration([])
 """
+"""
+Return the distance between two nodes : 0 if the node is the same, 1 otherwise
+"""
+def compute_distance(node1, node2):
+    if node1 == node2:
+        return 0
+    else:
+        return 1
+
 """
 Return all the next possible position from the current node
 """            
