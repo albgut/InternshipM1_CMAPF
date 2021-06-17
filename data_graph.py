@@ -26,7 +26,9 @@ A class to represent all the data of the problem :
 class Instance:
     
     def __init__(self, movement_graph, comm_graph, 
-                 config_start, config_end, heuristic):
+                 config_start, config_end, heuristic, seed=r.randint(0, 10000)):
+        r.seed(a=seed)
+        self.seed = seed
         self.make_proba(movement_graph)
         self.agent_graph = movement_graph.copy()
         self.deterministic_graph = self.generate_deterministic(
@@ -56,6 +58,7 @@ class Instance:
         new_data.agent_graph = self.agent_graph.copy()
         new_data.comm_graph = self.comm_graph.copy()
         new_data.deterministic_graph = self.deterministic_graph.copy()
+        new_data.seed = self.seed
         return new_data
         
     """

@@ -38,6 +38,10 @@ def DFS_tateo(data, online):
     return None
 
 def find_best_child(data, current_config, closed, start_time):
+    """
+    print("NEW FBC")
+    print("current config = ", current_config)
+    """
     nb_total_agents = data.config_start.nb_agent
     heap = []
     partial_config = Configuration([])
@@ -56,6 +60,19 @@ def find_best_child(data, current_config, closed, start_time):
             if isConnected(data, partial_config) \
                 and not closed.is_in(partial_config) \
                 and not partial_config.same(current_config):
+                    
+                    """
+                    print("Best result = ", next_partial.value[0], 
+                          ", g = ", next_partial.value[1], 
+                          ", h = ", next_partial.item[1],
+                          ", config = ", partial_config)
+                    for c in heap:
+                        print("result = ", c.value[0],
+                              ", g = ", c.value[1], 
+                              ", h = ", c.item[1],
+                              ", config = ", c.item[2])
+                    """
+                    
                     return partial_config
             continue
         else:
@@ -68,8 +85,12 @@ def find_best_child(data, current_config, closed, start_time):
                 g_cost = current_g + data.euclidean_distance(
                     current_config.get_agent_pos(num_agent), node)
                 h_cost = compute_h(data, current_config, new_config)
+                """
+                g_cost = round(g_cost, 12)
+                h_cost = round(h_cost, 12)
+                """
                 if not h_cost == m.inf and not g_cost == m.inf:
-                    item = Heap_item((h_cost + g_cost, -g_cost, new_config), 
+                    item = Heap_item((h_cost + g_cost, - g_cost, new_config.copy()), 
                                      (g_cost, h_cost, new_config.copy()))
                     heappush(heap, item)
     return Configuration([])

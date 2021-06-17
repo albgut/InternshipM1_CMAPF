@@ -29,7 +29,7 @@ def repeated_tateo(data):
     while True:
         current_config = path[0]
         next_config = path[1]
-        if update_graph(data, current_config):
+        if update_graph(data, current_config, next_config):
             block = True
         path.pop(0)
         final_path.append(current_config.copy())
@@ -51,20 +51,40 @@ def repeated_tateo(data):
 """
 Update the knowledge of the graph for the agent from a current configuration
 The incomming edges that are not present in the deterministic graph are deleted
+return true if the current path followed is blocked, false otherwise
 """            
-def update_graph(data, current_config):
+def update_graph(data, current_config, next_config):
     graph_change = False
+    path_block = False
     for agent in range(current_config.nb_agent):
         node = current_config.get_agent_pos(agent)
         edge_to_delete = []
+        #The node of the same agent at the next configuration could be deleted 
+        #before : have to verify.
+        next_node = next_config.get_agent_pos(agent)
+        found_next_position = (node == next_node)
         for neighbor in data.agent_graph.neighbors(node):
+            if next_node == neighbor:
+                found_next_position = True
             if not data.edge_present(node, neighbor):
                 graph_change = True
-                edge_to_delete.append(data.agent_graph.get_eid(node, neighbor))
+                edge = data.agent_graph.get_eid(node, neighbor)
+                edge_to_delete.append(edge)
+                if is_in_path(node, neighbor, current_config, next_config):
+                    path_block = True
         data.agent_graph.delete_edges(edge_to_delete)
+        if not found_next_position:
+            path_block = True
     if graph_change:
         data.clear_distance()
-    return graph_change
+    return path_block
+    
+def is_in_path(node, neighbor, current_config, next_config):
+    for agent in range(current_config.nb_agent):
+        if current_config.get_agent_pos(agent) == node and \
+            next_config.get_agent_pos(agent) == neighbor:
+                return True
+    return False
 
 if __name__ == "__main__":
     g_m = Grid(10, 10)

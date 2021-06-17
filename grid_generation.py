@@ -11,7 +11,9 @@ import random as r
 
 class Grid:
     
-    def __init__(self, w, h):
+    def __init__(self, w, h, seed=r.randint(0, 10000)):
+        self.seed = seed
+        r.seed(a=self.seed)
         self.h = h
         self.w = w
         self.graphe_m = ig.Graph()

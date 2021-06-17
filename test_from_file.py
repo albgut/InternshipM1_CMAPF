@@ -57,14 +57,17 @@ def treat_file(path, file_name, log_dir):
     res_path = DFS_tateo(data, False)
     time_end = t.perf_counter()
     log_file = open("./logs/" + log_dir + "/" + file_name.split(".")[0] + ".log", 'w')
-    if time_end - time_start > 300:
+    if time_end - time_start > 60:
         log_file.write("NO PATH FOUND : TIME OUT\n")
     else:
-        for i in range(len(res_path)):
-            log_file.write("s" + str(i))
-            for j in range(res_path[i].nb_agent):
-                log_file.write(" " + str(res_path[i].get_agent_pos(j)))
-            log_file.write("\n")
+        if isinstance(res_path, type(None)):
+            log_file.write("NO PATH FOUND\n")
+        else:
+            for i in range(len(res_path)):
+                log_file.write("s" + str(i))
+                for j in range(res_path[i].nb_agent):
+                    log_file.write(" " + str(res_path[i].get_agent_pos(j)))
+                log_file.write("\n")
     log_file.write("t " + str(time_end - time_start) + " s")
     log_file.close()
 
@@ -74,5 +77,5 @@ if __name__ == "__main__":
                "b-w-open_uniform_grid_13_range_25_10_18.exp", 
                "log_10_grid_25")
     """
-    treat_file_from_dir("./exp/exp_2_grid_25")
+    treat_file_from_dir("./exp/exp_10_grid_25")
     
