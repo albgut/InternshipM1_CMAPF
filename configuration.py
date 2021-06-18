@@ -121,12 +121,49 @@ class Configuration:
         return self.nb_agent == 0
     
     def __str__(self):
+        """
+        The toString method for print the configuration.
+
+        Returns
+        -------
+        string
+            The string representation of the configuration.
+
+        """
         return self.l_config.__str__()
     
     def __eq__(self, config):
+        """
+        The equality method to verify the equality of two configurations.
+
+        Parameters
+        ----------
+        config : Configuration
+            The configuration to compare.
+
+        Returns
+        -------
+        bool
+            True if the configurations are the same, False otherwise.
+
+        """
         return self.same(config)
     
     def __lt__(self, config):
+        """
+        The less than method to compare two configurations.
+
+        Parameters
+        ----------
+        config : Configuration
+            The configuration to compare.
+
+        Returns
+        -------
+        bool
+            True if the current object is less than config, False otherwise.
+
+        """
         if self.nb_agent < config.nb_agent:
             return True
         if self.nb_agent > config.nb_agent:
