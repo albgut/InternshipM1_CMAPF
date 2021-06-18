@@ -11,29 +11,17 @@ from typing import Any
 from heapq import *
 from configuration import *
 
-"""
-An object to insert in a heap. Do not compare the item only the value attribute
-"""
-"""
 
-ORIGINAL
-
-"""
-""" 
-@dataclass(order=True)
-class Heap_item:
-    value: float
-    item: Any=field(compare=False)
-"""
 @dataclass(order=True)
 class Heap_item:
     value: (float, float, Configuration)
+    #(g + h, -g, config)
     item: Any=field(compare=False)
    
 if __name__ == "__main__":
-    item_1 = Heap_item(15, (9, 6, [1, 4, 3]))
-    item_2 = Heap_item(10, (4, 6, [1, 3, 0]))
-    item_3 = Heap_item(13, (7, 6, [1, 4, 2]))
+    item_1 = Heap_item((15, 15, [1]), (9, 6, [1, 4, 3]))
+    item_2 = Heap_item((15, 15, [0]), (4, 6, [1, 3, 0]))
+    item_3 = Heap_item((5, 15, [1]), (7, 6, [1, 4, 2]))
     heap = []
     heappush(heap, item_1)
     heappush(heap, item_2)

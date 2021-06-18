@@ -1,23 +1,41 @@
 import igraph as ig
 from heapq import *
 
-import data_graph
+from instance import *
 
-"""
-Update the distance in the matrix distance in the data object.
-return 1 if a path was found 0 otherwise.
-"""
-def a_star(data, start_node, end_node):
-    graphe = data.agent_graph
+
+def a_star(instance, start_node, end_node):
+    """
+    Compute the cost of the shortest path from start_node to end_node 
+    using a star algorithm.
+
+    Parameters
+    ----------
+    instance : Instance
+        An object with all informations about the instance.
+    start_node : int
+        The index of the starting node.
+    end_node : int
+        The index of the goal.
+
+    Returns
+    -------
+    int
+        The cost of the shortest path is added to the matrix_distance 
+        attribute of the instance. Returns 0 if the algorithm can not 
+        find a path or 1 if it found one.
+
+    """
+    graphe = instance.agent_graph
     open_heap = []
     closed_set = set()
     #((f,h,g),node)
-    h_cost = data.euclidean_distance(start_node, end_node)
+    h_cost = instance.euclidean_distance(start_node, end_node)
     heappush(open_heap, ((h_cost, h_cost, 0),start_node))
     while not open_heap == []:
         (f, h, g), node = heappop(open_heap)
         closed_set.add(node)
-        data.add_distance(start_node, node, g)
+        instance.add_distance(start_node, node, g)
         if node == end_node:
             return 1
         ens_neighbors = graphe.neighbors(node)
@@ -25,10 +43,11 @@ def a_star(data, start_node, end_node):
             edge_id = graphe.get_eid(node, neighbor)
             #if not graphe.es[edge_id]["proba"] == 1:
             if not neighbor in closed_set:
-                #dist_curr_to_neigh = data.euclidean_distance(node, 
+                #dist_curr_to_neigh = instance.euclidean_distance(node, 
                 #                                             neighbor)
+                #new_g_cost = g + dist_curr_to_neigh
                 new_g_cost = g + 1
-                new_h_cost = data.euclidean_distance(neighbor, end_node)
+                new_h_cost = instance.euclidean_distance(neighbor, end_node)
                 new_f_cost = new_g_cost + new_h_cost
                 open_neighbor = find_in_open(open_heap, neighbor)
                 if not open_neighbor == None:
@@ -45,6 +64,24 @@ def a_star(data, start_node, end_node):
     return 0
     
 def find_in_open(open_heap, node):
+    """
+    Find a node into an heap, pop it and return it with its values f, g and h.
+
+    Parameters
+    ----------
+    open_heap : Heap<(float,float,float), int> 
+                (f,g,h), node
+        The heap with the node currently in treatment during the a star.
+    node : int
+        The node to find in the heap.
+
+    Returns
+    -------
+    item_heap : (float,float,float), int
+                (f,g,h), node
+        The item in the heap which contains the node and its values f, g and h.
+
+    """
     for i in range(len(open_heap)):
         (_, node_heap) = open_heap[i]
         if node_heap == node:

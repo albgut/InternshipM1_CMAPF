@@ -9,14 +9,25 @@ Created on Sun Jun 13 18:12:31 2021
 import os
 import igraph as ig
 
-from data_graph import *
+from instance import *
 from dfs_tateo import *
 from configuration import *
 
-"""
-Treat all the files .exp in the path
-"""
+
 def treat_file_from_dir(path):
+    """
+    Treat all the files *.exp in the directory.
+
+    Parameters
+    ----------
+    path : string
+        The path of the directory.
+
+    Returns
+    -------
+    None.
+
+    """
     l_file = os.listdir(path)
     nb_of_file = 0
     log_dir = "log" + path.split("/")[2][3:]
@@ -30,6 +41,24 @@ def treat_file_from_dir(path):
 Treat a file .exp and put the result in the log directory
 """       
 def treat_file(path, file_name, log_dir):
+    """
+    Treat a file *.exp, and put the result of the tateo algorithm into 
+    the log dir.
+
+    Parameters
+    ----------
+    path : string
+        The path to the directory where is located the file to treat.
+    file_name : string
+        The name of the file to treat.
+    log_dir : string
+        The name of the directory where the result will be create.
+
+    Returns
+    -------
+    None.
+
+    """
     print(file_name)
     file = open(path + "/" + file_name, "r")
     for line in file:
@@ -52,9 +81,9 @@ def treat_file(path, file_name, log_dir):
             print("error in file ")
             sys.exit()
     graph = (g_m, g_c)
-    data = Instance(g_m, g_c, config_start, config_end, "astar")
+    instance = Instance(g_m, g_c, config_start, config_end, "astar")
     time_start = t.perf_counter()
-    res_path = DFS_tateo(data, False)
+    res_path = DFS_tateo(instance, False)
     time_end = t.perf_counter()
     log_file = open("./logs/" + log_dir + "/" + file_name.split(".")[0] + ".log", 'w')
     if time_end - time_start > 60:
@@ -73,9 +102,9 @@ def treat_file(path, file_name, log_dir):
 
 if __name__ == "__main__":
     """
-    treat_file("./exp/exp_10_grid_25", 
-               "b-w-open_uniform_grid_13_range_25_10_18.exp", 
-               "log_10_grid_25")
+    treat_file("./exp/exp_2_grid_25", 
+               "b-w-open_uniform_grid_13_range_25_2_25.exp", 
+               "log_2_grid_25")
     """
-    treat_file_from_dir("./exp/exp_10_grid_25")
+    treat_file_from_dir("./exp/exp_2_grid_25")
     

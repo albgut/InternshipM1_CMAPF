@@ -13,20 +13,60 @@ import math as m
 from configuration import *
 from astar import *
 
-"""
-A class to represent all the data of the problem :
-    - An agent graph which represent the graph with the knowledge of all
-        the agents.
-    - A deterministic representation of the graph without any randomness
-        which is create at the beggining.
-    - A communication graph for the connectivity.
-    - The ending configuration.
-    - The heuristic used.
-"""
+
 class Instance:
+    """
+A class to represent all the data of the problem :
     
-    def __init__(self, movement_graph, comm_graph, 
-                 config_start, config_end, heuristic, seed=r.randint(0, 10000)):
+    - agent_graph : Graph
+        An graph which represent the knowledge of all the agents.
+        
+    - deterministic_graph : Graph
+        A deterministic representation of the graph without any randomness
+        which is create at the beggining.
+        
+    - comm_graph : Graph
+        A communication graph for the connectivity.
+        
+    - config_start : Configuration
+        The starting configuration
+        
+    - config_end : Configuration
+        The ending configuration.
+        
+    - heuristic : string
+        The heuristic used.
+    - seed : float
+        A seed for randomness.
+    """
+    
+    def __init__(self, movement_graph, comm_graph, config_start, config_end, 
+                 heuristic, seed=r.randint(0, 10000)):
+        """
+        Create a new instance.
+
+        Parameters
+        ----------
+        movement_graph : Graph
+            The movement graph of the problem. Need to have the attributes 
+            "x-coord" and "y-coord" on the vertices. A copy is created.
+        comm_graph : Graph
+            The communication graph of the problem.
+        config_start : Configuration
+            The starting configuration.
+        config_end : Configuration
+            The goal configuration.
+        heuristic : string
+            The heuristic to used choose from : 
+                "astar", "euclide", "manhattan".
+        seed : float, optional
+            The seed of the randomness. The default is r.randint(0, 10000).
+
+        Returns
+        -------
+        None.
+
+        """
         r.seed(a=seed)
         self.seed = seed
         self.make_proba(movement_graph)
@@ -40,48 +80,101 @@ class Instance:
         
         self.init_distance()
         
-    """
-    Return the sama object instance but with a different starting 
-    configuration.
-    """
     def new_start(self, new_start_config):
+        """
+        Change the starting configuration of the instance.
+
+        Parameters
+        ----------
+        new_start_config : Configuration
+            The new starting configuration.
+
+        Returns
+        -------
+        None.
+
+        """
         self.config_start = new_start_config
         
-    """
-    Copy the values of the instance without generate randomness again.
-    """
+        
     def copy(self):
-        new_data = Instance(ig.Graph(n=len(self.agent_graph.vs)), 
+        """
+        Copy the instance.
+
+        Returns
+        -------
+        new_instance : Instance
+            The new instance with the same parameters as the current object.
+
+        """
+        new_instance = Instance(ig.Graph(n=len(self.agent_graph.vs)), 
                         ig.Graph(), 
                         self.config_start, 
                         self.config_end, self.heuristic)
-        new_data.agent_graph = self.agent_graph.copy()
-        new_data.comm_graph = self.comm_graph.copy()
-        new_data.deterministic_graph = self.deterministic_graph.copy()
-        new_data.seed = self.seed
-        return new_data
+        new_instance.agent_graph = self.agent_graph.copy()
+        new_instance.comm_graph = self.comm_graph.copy()
+        new_instance.deterministic_graph = self.deterministic_graph.copy()
+        new_instance.seed = self.seed
+        return new_instance
         
-    """
-    Return True iff the edge between node_1 and node_2 is present in the 
-    deterministic graph or if node_1 = node_2, 
-    False otherwise.
-    """
+    
     def edge_present(self, node_1, node_2):
+        """
+        Used to see if there are an edge in the deterministic graph between
+        the two nodes.
+
+        Parameters
+        ----------
+        node_1 : int
+            The index of the first node.
+        node_2 : int
+            The index of the second node.
+
+        Returns
+        -------
+        bool
+            True if the edge (node1, node2) is present or if node1 == node2,
+            False otherwise.
+
+        """
         present = self.deterministic_graph.get_eid(node_1, node_2, error=False)
         return node_1 == node_2 or not present == -1
         
-    """
-    Give the attribute "proba" to the edges of the graph if not present
-    """  
+    
     def make_proba(self, graphe):
+        """
+        Generate the attribute "proba" in the graph if it is not already exist. 
+
+        Parameters
+        ----------
+        graphe : Graph
+            The graph to inspect.
+
+        Returns
+        -------
+        None.
+
+        """
         if not "proba" in graphe.es.attribute_names():
             graphe.es["proba"] = [0.0] * len(graphe.es)
         
-    """
-    Generate a deterministic graph which represent the real graph within the 
-    agents will evolved in.
-    """
+
     def generate_deterministic(self, graphe):
+        """
+        Generate the deterministic graph which represent the real graph 
+        where the agents will evolved in.
+
+        Parameters
+        ----------
+        graphe : Graph
+            A graph with a "proba" attribute on his edge.
+
+        Returns
+        -------
+        graphe : Graph
+            The final deterministic graph.
+
+        """
         edge_to_delete = []
         for edge in graphe.es:
             if r.random() < edge["proba"]:
@@ -89,23 +182,50 @@ class Instance:
         graphe.delete_edges(edge_to_delete)
         return graphe
     
-    """
-    Build the matrix of all the distances between nodes in the graph.
-    Initialize to None.
-    """
+
     def init_distance(self):
+        """
+        Initialize the matrix of distance between nodes in the agent_graph.
+        The default value of this distance is None.
+
+        Returns
+        -------
+        None.
+
+        """
         self.matrix_distance = [[None for i in range(len(self.agent_graph.vs))] 
                                 for j in range(len(self.agent_graph.vs))]
-    """
-    Clear all the distance in the matrix distance
-    """   
+  
     def clear_distance(self):
+        """
+        Clear all the distances in the matrix distance back to None.
+
+        Returns
+        -------
+        None.
+
+        """
         self.init_distance()
     
-    """
-    Get the distance in fonction of the attribute heuristic of the instance
-    """
+
     def get_distance(self, node_1, node_2):
+        """
+        Get the distance between two nodes in the agent_graph using the 
+        attribute heuristic.
+
+        Parameters
+        ----------
+        node_1 : int
+            The index of the first node.
+        node_2 : int
+            The index of the second node.
+
+        Returns
+        -------
+        float
+            The distance between the two nodes.
+
+        """
         #To compute only the upper part of the matrix
         if node_1 > node_2:
             tmp = node_1
@@ -115,15 +235,34 @@ class Instance:
             if self.heuristic == "euclide":
                 self.matrix_distance[node_1][node_2] = self.euclidean_distance(
                     node_1, node_2)
+            if self.heuristic == "manhattan":
+                self.matrix_distance[node_1][node_2] = self.manhattan_distance(
+                    node_1, node_2)
             if self.heuristic == "astar":
                 if a_star(self, node_1, node_2) == 0:
                     return m.inf
         return self.matrix_distance[node_1][node_2]
     
-    """
-    Add a new distance to the instance. Used in astar algorithm.
-    """
+
     def add_distance(self, node_1, node_2, cost):
+        """
+        Add a distance cost from node_1 to node_2 in the matrix distance.
+        Used by astar to fill the matrix.
+
+        Parameters
+        ----------
+        node_1 : int
+            The index of the first node.
+        node_2 : int
+            The index of the second node.
+        cost : float
+            The distance between node_1 and node_2.
+
+        Returns
+        -------
+        None.
+
+        """
         #To compute only the upper part of the matrix
         if node_1 > node_2:
             tmp = node_1
@@ -135,6 +274,22 @@ class Instance:
     Return a position in the form (x,y) from a node in the graph
     """
     def get_position(self, node):
+        """
+        Return a tuple with the coordinate of the node.
+
+        Parameters
+        ----------
+        node : int
+            The index of the node.
+
+        Returns
+        -------
+        x : int
+            The x coordinate of node.
+        y : int
+            The y coordinate of node.
+
+        """
         x = self.agent_graph.vs[node]["x_coord"]
         y = self.agent_graph.vs[node]["y_coord"]
         return x, y
@@ -143,11 +298,17 @@ class Instance:
     Utilitary functions
     """
     
-    """
-    Print a squared grid from the deterministic graph in the terminal.
-    Do not use it with other graphs
-    """
+
     def print_grid(self):
+        """
+        Print a grid graph. Works only if the deterministic graph was build 
+        with a Grid object.
+
+        Returns
+        -------
+        None.
+
+        """
         nb_squared = len(self.deterministic_graph.vs)
         h = int(m.sqrt(len(self.deterministic_graph.vs)))
         tmp = nb_squared - 1
@@ -200,23 +361,47 @@ class Instance:
                         line += s
             print(line)
     
-    """
-    Return the euclidean distance between two point.
-    pre two node index from the graph
-    post euclidean distance
-    """
+
     def euclidean_distance(self, node_1, node_2):
+        """
+        The euclidean distance between two nodes in the agent_graph.
+
+        Parameters
+        ----------
+        node_1 : int
+            The index of the first node.
+        node_2 : int
+            The index of the second node.
+
+        Returns
+        -------
+        float
+            The euclidean distance between the two nodes.
+
+        """
         x_a1, y_a1 = self.get_position(node_1)
         x_a2, y_a2 = self.get_position(node_2)
         
         return m.sqrt((x_a1 - x_a2)*(x_a1 - x_a2) + (y_a1 - y_a2)*(y_a1 - y_a2))
 
-    """
-    Return the manhattan distance between two point.
-    pre two node index from the graph
-    post manhattan distance
-    """
+
     def manhattan_distance(self, node_1, node_2):
+        """
+        The Manhattan distance between the two nodes in the agent_graph.
+
+        Parameters
+        ----------
+        node_1 : int
+            The index of the first node.
+        node_2 : int
+            The index of the second node.
+
+        Returns
+        -------
+        float
+            The Manhattan distance between the two nodes.
+
+        """
         x_a1, y_a1 = self.get_position(node_1)
         x_a2, y_a2 = self.get_position(node_2)
         

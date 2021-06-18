@@ -10,26 +10,44 @@ import time as t
 from heapq import *
 
 from closed_Tree import *
-from data_graph import *
+from instance import *
 from configuration import *
 from heap_item import *
 
-"""
-Depth-First Search from tateo in partially known environment
-data is a Instance object with all infos about the instance
-"""
-def DFS_tateo(data, online):
+
+def DFS_tateo(instance, online):
+    """
+    Return a path according to the information in instance.
+
+    Parameters
+    ----------
+    instance : Instance
+        An object with all informations about the instance.
+    online : boolean
+        True for execute the online_tateo to a stochastic graph,
+        False for execute the regular tateo on a deterministic graph.
+
+    Returns
+    -------
+    None :
+        If no path is found.
+    path : Array<Configuration>
+        A connected path from starting configuration to the target
+        configuration.
+    """
+    
     start_time = t.perf_counter()
-    path = [data.config_start]
+    path = [instance.config_start]
     closed = Closed_tree()
     while not path == [] and not time_out(start_time):
         current_config = path[-1]
         if online:
-            update_graph(data, current_config, closed)
-        closed.add_configuration(current_config)
-        if current_config.same(data.config_end):
+            update_graph(instance, current_config, closed)
+        #closed.add_configuration(current_config)
+        if current_config.same(instance.config_end):
             return path
-        next_config = find_best_child(data, current_config, closed, start_time)
+        next_config = find_best_child(instance, current_config, closed, 
+                                      start_time)
         if not next_config.is_empty():
             path.append(next_config)
         else:
@@ -37,15 +55,38 @@ def DFS_tateo(data, online):
     print("Cannot find a path")
     return None
 
-def find_best_child(data, current_config, closed, start_time):
+
+def find_best_child(instance, current_config, closed, start_time):
+    """
+    Find the best next configuration after the current one.
+
+    Parameters
+    ----------
+    instance : Instance
+        An object with all informations about the instance.
+    current_config : Configuration
+        The current configuration.
+    closed : Closed_tree
+        An object which stores all the previous configurations explored.
+    start_time : float
+        The time (perf_counter) which the algorithm dfs start. Used to stop the
+        algorithm if it take too long.
+
+    Returns
+    -------
+    config : Configuration
+        The next best configuration from the current one. If there is no next 
+        configuration, it will be an empty configuration.
+
+    """
     """
     print("NEW FBC")
     print("current config = ", current_config)
     """
-    nb_total_agents = data.config_start.nb_agent
+    nb_total_agents = instance.config_start.nb_agent
     heap = []
     partial_config = Configuration([])
-    h_cost = compute_h(data, current_config, partial_config)
+    h_cost = compute_h(instance, current_config, partial_config)
     #heap item structure is : ((h + g, -g, config), (g, h, config))
     #Used to store g and h and compare only with g + h
     item = Heap_item((h_cost, 0, partial_config), 
@@ -57,7 +98,7 @@ def find_best_child(data, current_config, closed, start_time):
         (current_g, _, partial_config) = next_partial.item
         num_agent = partial_config.nb_agent
         if num_agent == nb_total_agents:
-            if isConnected(data, partial_config) \
+            if isConnected(instance, partial_config) \
                 and not closed.is_in(partial_config) \
                 and not partial_config.same(current_config):
                     
@@ -76,33 +117,30 @@ def find_best_child(data, current_config, closed, start_time):
                     return partial_config
             continue
         else:
-            successors = get_successors(data, 
+            successors = get_successors(instance, 
                                         current_config.get_agent_pos(num_agent)
                                         )
             for node in successors:
                 new_config = partial_config.copy()
                 new_config.add_agent(node)
-                #g_cost = current_g + data.euclidean_distance(
+                #g_cost = current_g + instance.euclidean_distance(
                 #    current_config.get_agent_pos(num_agent), node)
                 g_cost = current_g + compute_distance(
                     current_config.get_agent_pos(num_agent), node)
-                h_cost = compute_h(data, current_config, new_config)
-                """
-                g_cost = round(g_cost, 12)
-                h_cost = round(h_cost, 12)
-                """
+                h_cost = compute_h(instance, current_config, new_config)
                 if not h_cost == m.inf and not g_cost == m.inf:
-                    item = Heap_item((h_cost + g_cost, - g_cost, new_config.copy()), 
+                    item = Heap_item((h_cost + g_cost, - g_cost, 
+                                      new_config.copy()), 
                                      (g_cost, h_cost, new_config.copy()))
                     heappush(heap, item)
     return Configuration([])
 
 """
-def find_best_child_avt(data, current_config, closed, start_time):
-    nb_total_agents = data.config_start.nb_agent
+def find_best_child_avt(instance, current_config, closed, start_time):
+    nb_total_agents = instance.config_start.nb_agent
     heap = []
     partial_config = Configuration([])
-    h_cost = compute_h(data, current_config, partial_config)
+    h_cost = compute_h(instance, current_config, partial_config)
     #heap item structure is : ((g + h, |config|), (g, h, config))
     #Used to store g and h and compare only with g + h
     item = Heap_item((h_cost , 0), 
@@ -113,30 +151,44 @@ def find_best_child_avt(data, current_config, closed, start_time):
         (current_g, _, partial_config) = heappop(heap).item
         num_agent = partial_config.nb_agent
         if num_agent == nb_total_agents:
-            if isConnected(data, partial_config) \
+            if isConnected(instance, partial_config) \
                 and not closed.is_in(partial_config) \
                 and not partial_config.same(current_config):
                     return partial_config
             continue
         else:
-            successors = get_successors(data, 
+            successors = get_successors(instance, 
                                         current_config.get_agent_pos(num_agent)
                                         )
             for node in successors:
                 new_config = partial_config.copy()
                 new_config.add_agent(node)
-                g_cost = current_g + data.get_distance(
+                g_cost = current_g + instance.get_distance(
                     current_config.get_agent_pos(num_agent), node)
-                h_cost = compute_h(data, current_config, new_config)
+                h_cost = compute_h(instance, current_config, new_config)
                 item = Heap_item((g_cost + h_cost, new_config.nb_agent), 
                                  (g_cost, h_cost, new_config.copy()))
                 heappush(heap, item)
     return Configuration([])
 """
-"""
-Return the distance between two nodes : 0 if the node is the same, 1 otherwise
-"""
+
 def compute_distance(node1, node2):
+    """
+    Returns the unit distance between the nodes. 
+
+    Parameters
+    ----------
+    node1 : int
+        The index of the first node.
+    node2 : int
+        The index of the second node.
+
+    Returns
+    -------
+    distance : int
+        The unit distance between the nodes. 0 if node1 == node2, 1 otherwise.
+
+    """
     if node1 == node2:
         return 0
     else:
@@ -145,73 +197,142 @@ def compute_distance(node1, node2):
 """
 Return all the next possible position from the current node
 """            
-def get_successors(data, current_node):
-    next_positions = data.agent_graph.neighbors(current_node)
+def get_successors(instance, current_node):
+    """
+    Returns all the next possible positions from the current node.
+
+    Parameters
+    ----------
+    instance : Instance
+        An object with all informations about the instance.
+    current_node : int
+        The index of the current node.
+
+    Returns
+    -------
+    next_positions : Array<int>
+        An array which contains all the index of the neighbors of current_node
+        and current_node itself.
+
+    """
+    next_positions = instance.agent_graph.neighbors(current_node)
     next_positions.append(current_node)
     return next_positions
 
+            
+def update_graph(instance, current_config, closed):
+    """
+    Update the agent_graph in instance to reflect the knowledge of the agents.
 
-"""
-Update the knowledge of the graph for the agent from a current configuration
-The incomming edges that are not present in the deterministic graph are deleted
-"""            
-def update_graph(data, current_config, closed):
+    Parameters
+    ----------
+    instance : Instance
+        An object with all informations about the instance.
+    current_config : Configuration
+        The current configuration.
+    closed : Closed_tree
+        An object which stores all the previous configurations explored.
+
+    Returns
+    -------
+    None
+        All the incomming/outcomming edges to/from the current_config which
+        is not present in the deterministic graph in instance are deleted.
+
+    """
     graph_change = False
     for agent in range(current_config.nb_agent):
         node = current_config.get_agent_pos(agent)
         edge_to_delete = []
-        for neighbor in data.agent_graph.neighbors(node):
-            if not data.edge_present(node, neighbor):
+        for neighbor in instance.agent_graph.neighbors(node):
+            if not instance.edge_present(node, neighbor):
                 graph_change = True
-                edge_to_delete.append(data.agent_graph.get_eid(node, neighbor))
-        data.agent_graph.delete_edges(edge_to_delete)
+                edge_to_delete.append(instance.agent_graph.get_eid(node, 
+                                                                   neighbor))
+        instance.agent_graph.delete_edges(edge_to_delete)
     if graph_change:
         closed.clear()
-        data.clear_distance()
+        instance.clear_distance()
 
 
-"""
-Use to stop the program if it take to many times to compute.
-"""
 def time_out(start):
+    """
+    Compute the current time elapsed from start.
+    Use to stop the program if it take to many times to compute.
+
+    Parameters
+    ----------
+    start : float
+        The time (perf_counter) which the algorithm dfs start.
+
+    Returns
+    -------
+    bool
+        True if the time elapsed is greater than 60, False otherwise.
+
+    """
     current_time = t.perf_counter() - start
     if current_time > 60:
         return True
     else:
         return False
     
-"""
-Calculate the heuristic value which correspond to the distance from the 
-positions of all the agents in a configuration to their respective goals.
-TODO
-pre 
-post 
-"""
-def compute_h(data, current_config, partial_config):
+
+def compute_h(instance, current_config, partial_config):
+    """
+    Compute the distance between the current partial configuration 
+    and the goal ; the h cost of the partial configuration.
+
+    Parameters
+    ----------
+    instance : Instance
+        An object with all informations about the instance.
+    current_config : Configuration
+        The current configuration. Used to complete the partial configuration.
+    partial_config : Configuration
+        A partial configuration.
+
+    Returns
+    -------
+    h_cost : float
+        The h cost of the partial configuration.
+
+    """
     h_cost = 0
     for num_agent in range(partial_config.nb_agent):
         agent_current_node = partial_config.get_agent_pos(num_agent)
-        agent_goal_node = data.config_end.get_agent_pos(num_agent)
-        h_cost += data.get_distance(agent_current_node, agent_goal_node)
+        agent_goal_node = instance.config_end.get_agent_pos(num_agent)
+        h_cost += instance.get_distance(agent_current_node, agent_goal_node)
     for num_agent in range(partial_config.nb_agent, current_config.nb_agent):
         agent_current_node = current_config.get_agent_pos(num_agent)
-        agent_goal_node = data.config_end.get_agent_pos(num_agent)
-        h_cost += data.get_distance(agent_current_node, agent_goal_node)
+        agent_goal_node = instance.config_end.get_agent_pos(num_agent)
+        h_cost += instance.get_distance(agent_current_node, agent_goal_node)
     return h_cost
 
-"""
-Return True iff all the agents in the configuration are connected in the
-communication graph
-TODO
-"""
-def isConnected(data, config):
+def isConnected(instance, config):
+    """
+    Verify if all the agent in the configuration are connected.
+
+    Parameters
+    ----------
+    instance : Instance
+        An object with all informations about the instance.
+    config : Configuration
+        The configuration to verify.
+
+    Returns
+    -------
+    bool
+        True if the configuration is connected, False otherwise.
+
+    """
     stack = [0]
-    agent = [False] * data.config_start.nb_agent
+    agent = [False] * instance.config_start.nb_agent
     agent[0] = True
     count = 1
     while not len(stack) == 0:
         num_agent = stack.pop()
-        for neighbor in data.comm_graph.neighbors(
+        for neighbor in instance.comm_graph.neighbors(
                 config.get_agent_pos(num_agent)):
             for i in range(config.nb_agent):
                 if config.get_agent_pos(i) == neighbor and not agent[i]:
@@ -220,15 +341,40 @@ def isConnected(data, config):
                     stack.append(i)
     return count == config.nb_agent
 
+
+def to_list_agent(path):
+    """
+    Change the path from a list of Configuration to a list of paths, 
+    one for each agent.
+
+    Parameters
+    ----------
+    path : Array<Configuration>
+        The path to change.
+
+    Returns
+    -------
+    path_agent : Array<Array<int>>
+        The list of the paths.
+
+    """
+    path_agent = []
+    for i in range(path[0].nb_agent):
+        path_agent.append([])
+    for c in path:
+        for agent in range(c.nb_agent):
+            path_agent[agent].append(c.get_agent_pos(agent))
+    return path_agent
     
 if __name__ == "__main__":
     g_c = ig.Graph.Full(n=14)
     g_c = ig.Graph()
     g_c.add_vertices(14)
     g_m = ig.Graph.Full(n=14)
-    data = Instance(g_m, g_c, Configuration([1,2]), Configuration([10, 13]), "astar")
+    instance = Instance(g_m, g_c, Configuration([1,2]), 
+                        Configuration([10, 13]), "astar")
     config = Configuration([4, 9])
-    print(isConnected(data, config))
+    print(isConnected(instance, config))
     
     g_m = ig.Graph([(0, 1), (0, 3), (0, 2), (1, 3), (2, 4)])
     g_m.vs["x_coord"] = [0, 1, 0, 1, 0]
