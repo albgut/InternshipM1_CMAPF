@@ -43,7 +43,7 @@ def DFS_tateo(instance, online):
         current_config = path[-1]
         if online:
             update_graph(instance, current_config, closed)
-        #closed.add_configuration(current_config)
+        closed.add_configuration(current_config)
         if current_config.same(instance.config_end):
             return path
         next_config = find_best_child(instance, current_config, closed, 
@@ -88,7 +88,6 @@ def find_best_child(instance, current_config, closed, start_time):
     partial_config = Configuration([])
     h_cost = compute_h(instance, current_config, partial_config)
     #heap item structure is : ((h + g, -g, config), (g, h, config))
-    #Used to store g and h and compare only with g + h
     item = Heap_item((h_cost, 0, partial_config), 
                      (0, h_cost, partial_config.copy())
                      )
@@ -123,10 +122,10 @@ def find_best_child(instance, current_config, closed, start_time):
             for node in successors:
                 new_config = partial_config.copy()
                 new_config.add_agent(node)
-                #g_cost = current_g + instance.euclidean_distance(
-                #    current_config.get_agent_pos(num_agent), node)
-                g_cost = current_g + compute_distance(
+                g_cost = current_g + instance.euclidean_distance(
                     current_config.get_agent_pos(num_agent), node)
+                #g_cost = current_g + compute_distance(
+                #    current_config.get_agent_pos(num_agent), node)
                 h_cost = compute_h(instance, current_config, new_config)
                 if not h_cost == m.inf and not g_cost == m.inf:
                     item = Heap_item((h_cost + g_cost, - g_cost, 
@@ -142,7 +141,6 @@ def find_best_child_avt(instance, current_config, closed, start_time):
     partial_config = Configuration([])
     h_cost = compute_h(instance, current_config, partial_config)
     #heap item structure is : ((g + h, |config|), (g, h, config))
-    #Used to store g and h and compare only with g + h
     item = Heap_item((h_cost , 0), 
                      (0, h_cost, partial_config.copy())
                      )
@@ -302,11 +300,13 @@ def compute_h(instance, current_config, partial_config):
     for num_agent in range(partial_config.nb_agent):
         agent_current_node = partial_config.get_agent_pos(num_agent)
         agent_goal_node = instance.config_end.get_agent_pos(num_agent)
-        h_cost += instance.get_distance(agent_current_node, agent_goal_node)
+        h_cost += instance.get_distance(agent_current_node, 
+                                        agent_goal_node, num_agent)
     for num_agent in range(partial_config.nb_agent, current_config.nb_agent):
         agent_current_node = current_config.get_agent_pos(num_agent)
         agent_goal_node = instance.config_end.get_agent_pos(num_agent)
-        h_cost += instance.get_distance(agent_current_node, agent_goal_node)
+        h_cost += instance.get_distance(agent_current_node, 
+                                        agent_goal_node, num_agent)
     return h_cost
 
 def isConnected(instance, config):

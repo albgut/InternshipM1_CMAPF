@@ -4,7 +4,7 @@ from heapq import *
 from instance import *
 
 
-def a_star(instance, start_node, end_node):
+def a_star(instance, start_node, end_node, agent=None):
     """
     Compute the cost of the shortest path from start_node to end_node 
     using a star algorithm.
@@ -17,13 +17,16 @@ def a_star(instance, start_node, end_node):
         The index of the starting node.
     end_node : int
         The index of the goal.
+    agent : int
+        The index of the current agent. Used for penalty based algorithm.
 
     Returns
     -------
     int
         The cost of the shortest path is added to the matrix_distance 
-        attribute of the instance. Returns 0 if the algorithm can not 
-        find a path or 1 if it found one.
+        attribute of the instance. Returns -1 if the algorithm can not 
+        find a path or 1 (or the cost of the path if the heuristic is penalty)
+        if it found one.
 
     """
     graphe = instance.agent_graph
@@ -35,18 +38,25 @@ def a_star(instance, start_node, end_node):
     while not open_heap == []:
         (f, h, g), node = heappop(open_heap)
         closed_set.add(node)
-        instance.add_distance(start_node, node, g)
+        if agent == None:
+            instance.add_distance(start_node, node, g)
         if node == end_node:
-            return 1
+            if agent == None:
+                return 1
+            else:
+                return g
         ens_neighbors = graphe.neighbors(node)
         for neighbor in ens_neighbors:
             edge_id = graphe.get_eid(node, neighbor)
             #if not graphe.es[edge_id]["proba"] == 1:
             if not neighbor in closed_set:
-                #dist_curr_to_neigh = instance.euclidean_distance(node, 
-                #                                             neighbor)
-                #new_g_cost = g + dist_curr_to_neigh
-                new_g_cost = g + 1
+                dist_curr_to_neigh = instance.euclidean_distance(node, 
+                                                             neighbor)
+                if instance.heuristic == "penalty":
+                    dist_curr_to_neigh += instance.penalty_func(node, neighbor,
+                                                                agent)
+                new_g_cost = g + dist_curr_to_neigh
+                #new_g_cost = g + 1
                 new_h_cost = instance.euclidean_distance(neighbor, end_node)
                 new_f_cost = new_g_cost + new_h_cost
                 open_neighbor = find_in_open(open_heap, neighbor)
@@ -61,7 +71,7 @@ def a_star(instance, start_node, end_node):
                     open_neighbor = ((new_g_cost + new_h_cost,
                                       new_h_cost, new_g_cost), neighbor)
                 heappush(open_heap, open_neighbor)
-    return 0
+    return -1
     
 def find_in_open(open_heap, node):
     """

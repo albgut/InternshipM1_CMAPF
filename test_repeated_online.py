@@ -38,19 +38,24 @@ def test_repeated_online(grid_length, seed=r.randint(0, 10000)):
     movement_graph = g.graphe_m
     nb_vertices = grid_length ** 2
     comm_graph = ig.Graph.Full(n=nb_vertices)
-    #config_start = Configuration([0, 1, 2, 3, 4, 5])
-    config_start = Configuration([0, 1, 2])
-    """
+    config_start = Configuration([0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11])
+    #config_start = Configuration([0, 1, 2])
+    
     config_end = Configuration([nb_vertices - 1, nb_vertices - 2, 
                                 nb_vertices - 3, nb_vertices - 4, 
-                                nb_vertices - 5, nb_vertices - 6])
+                                nb_vertices - 5, nb_vertices - 6,
+                                nb_vertices - 7, nb_vertices - 8,
+                                nb_vertices - 9, nb_vertices - 10,
+                                nb_vertices - 11, nb_vertices - 12])
     """
     config_end = Configuration([nb_vertices - 1, nb_vertices - 2,
                                 nb_vertices - 3])
+    """
     instance1 = Instance(movement_graph, comm_graph, 
                      config_start, config_end, "astar", seed=seed)
     instance2 = instance1.copy()
     instance3 = instance1.copy()
+    instance3.heuristic = "penalty"
     print("ALL DATA COMPUTED")
     t_start = t.perf_counter()
     path_repeated_tateo = repeated_tateo(instance1)
@@ -67,13 +72,13 @@ def test_repeated_online(grid_length, seed=r.randint(0, 10000)):
     
     
     t_start = t.perf_counter()
-    path_dfs = DFS_tateo(instance3, False)
+    path_dfs = DFS_tateo(instance3, True)
     t_end = t.perf_counter()
-    t_online = t_end - t_start
-    print("result from dfs :")
-    print_result(t_online, path_dfs)
+    t_penalty = t_end - t_start
+    print("result from penalty :")
+    print_result(t_penalty, path_dfs)
     
-    print(to_list_agent(path_dfs))
+    #print(to_list_agent(path_dfs))
     
     
     assert(instance1.deterministic_graph.get_edgelist() == 
@@ -83,9 +88,31 @@ def test_repeated_online(grid_length, seed=r.randint(0, 10000)):
     print("seed = ", instance1.seed)
     print()
     instance1.print_grid()
-    if not isinstance(path_repeated_tateo, type(None)) and \
-        not isinstance(path_online, type(None)):
-            assert(len(path_online) == len(path_repeated_tateo))
+    #if not isinstance(path_repeated_tateo, type(None)) and \
+    #    not isinstance(path_online, type(None)):
+    #        assert(len(path_online) == len(path_repeated_tateo))
+    print()
+    min_time = min(t_online, t_penalty, t_repeated_tateo)
+    
+    s = "Min time = "
+    if min_time == t_online:
+        s += "online "
+    if min_time == t_penalty:
+        s += "penalty "
+    if min_time == t_repeated_tateo:
+        s += "repeated "
+    print(s)
+    
+    s = "\nMin path = "
+    min_path = min(len(path_dfs), len(path_online), 
+                   len(path_repeated_tateo))
+    if min_path == len(path_online):
+        s += "online "
+    if min_path == len(path_dfs):
+        s += "penalty "
+    if min_path == len(path_repeated_tateo):
+        s += "repeated "
+    print(s)
 
 def print_result(time, path):
     """
@@ -112,4 +139,4 @@ def print_result(time, path):
         print("No path found")
 
 if __name__ == "__main__":
-    test_repeated_online(4)
+    test_repeated_online(10)

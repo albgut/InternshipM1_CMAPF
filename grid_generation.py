@@ -100,7 +100,7 @@ class Grid:
         None.
 
         """
-        if r.random() < 0.5:
+        if r.random() < 0.25:
             rand = r.randint(1, 9)
             self.graphe_m.es[edge_id]["proba"] = round(rand * 0.1, 1)
         else:

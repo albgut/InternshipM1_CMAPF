@@ -36,6 +36,7 @@ A class to represent all the data of the problem :
         
     - heuristic : string
         The heuristic used.
+        
     - seed : float
         A seed for randomness.
     """
@@ -208,7 +209,7 @@ A class to represent all the data of the problem :
         self.init_distance()
     
 
-    def get_distance(self, node_1, node_2):
+    def get_distance(self, node_1, node_2, agent=None):
         """
         Get the distance between two nodes in the agent_graph using the 
         attribute heuristic.
@@ -219,6 +220,8 @@ A class to represent all the data of the problem :
             The index of the first node.
         node_2 : int
             The index of the second node.
+        agent : int
+            The index of the current agent.
 
         Returns
         -------
@@ -239,8 +242,14 @@ A class to represent all the data of the problem :
                 self.matrix_distance[node_1][node_2] = self.manhattan_distance(
                     node_1, node_2)
             if self.heuristic == "astar":
-                if a_star(self, node_1, node_2) == 0:
+                if a_star(self, node_1, node_2) == -1:
                     return m.inf
+            if self.heuristic == "penalty":
+                cost = a_star(self, node_1, node_2, agent)
+                if cost == -1:
+                    return m.inf
+                else:
+                    return cost
         return self.matrix_distance[node_1][node_2]
     
 
@@ -293,10 +302,71 @@ A class to represent all the data of the problem :
         x = self.agent_graph.vs[node]["x_coord"]
         y = self.agent_graph.vs[node]["y_coord"]
         return x, y
+    
+    def penalty_func(self, node_1, node_2, agent):
+        """
+        Compute the penalty for the edge between node_1 and node_2 according
+        to DT Algorithm (Aksakalli and Ari).
 
+        Parameters
+        ----------
+        node_1 : int
+            The index of the first node.
+        node_2 : int
+            The index of the second node.
+        agent : int
+            The index of the current agent.
+
+        Returns
+        -------
+        The value of the penalty function.
+
+        """
+        edge = self.agent_graph.get_eid(node_1, node_2)
+        proba_edge = self.agent_graph.es[edge]["proba"]
+        #s = str(agent)
+        if proba_edge == 0:
+            #print(s + " : 0")
+            return 0
+        m_x, m_y = self.midpoint(node_1, node_2)
+        goal_node = self.config_end.get_agent_pos(agent)
+        g_x, g_y = self.get_position(goal_node)
+        dist_to_term = m.sqrt((m_x - g_x)*(m_x - g_x) + 
+                              (m_y - g_y)*(m_y - g_y))
+        power = - m.log(1 - proba_edge)
+        res = (dist_to_term / (1 - proba_edge)) ** power
+        #print(s + " : " + str(res))
+        return res
+        
+    
     """
     Utilitary functions
     """
+    
+    def midpoint(self, node_1, node_2):
+        """
+        Compute the midpoint of the segment between node_1 and node_2.
+
+        Parameters
+        ----------
+        node_1 : int
+            The index of the first node.
+        node_2 : int
+            The index of the second node.
+
+        Returns
+        -------
+        m_x : float
+            The x coordinate of midpoint.
+        m_y : float
+            The y coordinate of midpoint.
+
+        """
+        x_1, y_1 = self.get_position(node_1)
+        x_2, y_2 = self.get_position(node_2)
+        m_x = (x_1 + x_2) / 2
+        m_y = (y_1 + y_2) / 2
+        return m_x, m_y
     
 
     def print_grid(self):
@@ -382,7 +452,8 @@ A class to represent all the data of the problem :
         x_a1, y_a1 = self.get_position(node_1)
         x_a2, y_a2 = self.get_position(node_2)
         
-        return m.sqrt((x_a1 - x_a2)*(x_a1 - x_a2) + (y_a1 - y_a2)*(y_a1 - y_a2))
+        return m.sqrt((x_a1 - x_a2)*(x_a1 - x_a2) + 
+                      (y_a1 - y_a2)*(y_a1 - y_a2))
 
 
     def manhattan_distance(self, node_1, node_2):

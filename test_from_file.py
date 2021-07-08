@@ -106,5 +106,5 @@ if __name__ == "__main__":
                "b-w-open_uniform_grid_13_range_25_2_25.exp", 
                "log_2_grid_25")
     """
-    treat_file_from_dir("./exp/exp_2_grid_25")
+    treat_file_from_dir("./exp/exp_4_grid_150")
     
