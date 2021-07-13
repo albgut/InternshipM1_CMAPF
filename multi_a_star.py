@@ -9,10 +9,51 @@ Created on Fri Jul  9 14:48:42 2021
 import igraph as ig
 from heapq import *
 import math as m
+import time as t
 
 from grid_generation import *
 
 from instance import *
+
+def a_star(instance, start_node, end_node, reserved, beggin=False):
+    """
+    TODO
+    """
+    graphe = instance.agent_graph
+    open_heap = []
+    closed_set = set()
+    previous_node = dict()
+    #((f,h,g),config)
+    h_cost = instance.manhattan_distance(start_node, end_node)
+    heappush(open_heap, ((h_cost, h_cost, 0), start_node))
+    previous_node[start_node] = None
+    time = 0
+    while not open_heap == []:
+        time += 1
+        (f, h, g), current_node = heappop(open_heap)
+        closed_set.add(current_node)
+        if current_node == end_node:
+            return build_path(previous_node, end_node)
+        l_nodes = next_nodes_ca(instance, current_node, time, reserved, beggin)
+        for next_node in l_nodes:
+            if not next_node in closed_set:
+                new_g_cost = g + instance.manhattan_distance(current_node, 
+                                                             next_node)
+                new_h_cost = instance.manhattan_distance(next_node, end_node)
+                new_f_cost = new_g_cost + new_h_cost
+                open_neighbor = find_in_open(open_heap, next_node)
+                if not open_neighbor == None:
+                    (old_f, old_h, old_g), _ = open_neighbor
+                    if new_g_cost < old_g:
+                        open_neighbor = ((new_f_cost,
+                                          new_h_cost, new_g_cost), next_node)
+                else:
+                    open_neighbor = ((new_f_cost,
+                                      new_h_cost, new_g_cost), next_node)
+                previous_node[next_node] = current_node
+                heappush(open_heap, open_neighbor)
+    print("Cannot find a path")
+    return None
 
 
 def a_star_multi(instance):
@@ -149,8 +190,9 @@ def isConnected(instance, config):
     count = 1
     while not len(stack) == 0:
         num_agent = stack.pop()
-        for neighbor in instance.comm_graph.neighbors(
-                config.get_agent_pos(num_agent)):
+        ens = instance.comm_graph.neighbors(config.get_agent_pos(num_agent))
+        ens.append(config.get_agent_pos(num_agent))
+        for neighbor in ens:
             for i in range(config.nb_agent):
                 if config.get_agent_pos(i) == neighbor and not agent[i]:
                     agent[i] = True
@@ -264,6 +306,52 @@ def compute_distance(instance, config_start, config_end):
         cost += instance.manhattan_distance(node_start, node_end)
     return cost
 
+def h_c_a_star(instance):
+    """
+    TODO
+    """
+    reserved = set()
+    path = [0] * instance.config_start.nb_agent
+    for agent in range(instance.config_start.nb_agent):
+        path[agent] = plan_path(instance, agent, reserved)
+    return path
+
+def plan_path(instance, agent, reserved):
+    """
+    TODO
+    """
+    if agent == 0:
+        path = a_star(instance, instance.config_start.get_agent_pos(agent),
+                      instance.config_end.get_agent_pos(agent), reserved, True)
+    else:
+        path = a_star(instance, instance.config_start.get_agent_pos(agent),
+                      instance.config_end.get_agent_pos(agent), reserved)
+    for i in range(len(path)):
+        reserved.add((path[i], i))
+        
+    print("\nNEW RESERVED :\n")
+    print(reserved, "\n")
+    return path
+        
+def next_nodes_ca(instance, current_node, time, reserved, beggin):
+    """
+    TODO
+    """
+    ens = instance.agent_graph.neighbors(current_node)
+    ens.append(current_node)
+    if beggin:
+        return ens
+    else:
+        for node in ens:
+            connected = False
+            for comm_node in instance.comm_graph.neighbors(node):
+                if (comm_node, time) in reserved:
+                    connected = True
+                    break
+            if not connected:
+                ens.remove(node)
+        return ens
+
 if __name__ == "__main__":
     print("\tTEST FOR BT :\n")
     g = Grid(10, 10)
@@ -287,7 +375,19 @@ if __name__ == "__main__":
         print(key, ", ", d[key])
         
     print("\n\tTEST ASTAR MULTI :\n")
+    t_s = t.perf_counter()
     l = a_star_multi(i)
+    t_end = t.perf_counter()
+    print("it tooks ", t_end - t_s, "s.")
+    if not isinstance(l, type(None)):
+        for c in l:
+            print(c)
+    
+    print("\n\tTEST HCASTAR :\n")
+    t_s = t.perf_counter()
+    l = h_c_a_star(i)
+    t_end = t.perf_counter()
+    print("it tooks ", t_end - t_s, "s.")
     if not isinstance(l, type(None)):
         for c in l:
             print(c)

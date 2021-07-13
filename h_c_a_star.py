@@ -14,3 +14,12 @@ from grid_generation import *
 
 from instance import *
 
+def h_c_a_star(instance):
+    """
+    TODO
+    """
+    reserved = dict()
+    for agent in instance.
+
+if __name__ == "__main__":
+    print(5)
