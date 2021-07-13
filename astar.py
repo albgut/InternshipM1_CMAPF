@@ -1,5 +1,6 @@
 import igraph as ig
 from heapq import *
+import math as m
 
 from instance import *
 
@@ -34,13 +35,13 @@ def a_star(instance, start_node, end_node, agent=None):
     closed_set = set()
     #((f,h,g),node)
     h_cost = instance.euclidean_distance(start_node, end_node)
-    heappush(open_heap, ((h_cost, h_cost, 0),start_node))
+    heappush(open_heap, ((h_cost, h_cost, 0), end_node))
     while not open_heap == []:
         (f, h, g), node = heappop(open_heap)
         closed_set.add(node)
         if agent == None:
-            instance.add_distance(start_node, node, g)
-        if node == end_node:
+            instance.add_distance(end_node, node, g)
+        if node == start_node:
             if agent == None:
                 return 1
             else:
@@ -52,12 +53,12 @@ def a_star(instance, start_node, end_node, agent=None):
             if not neighbor in closed_set:
                 dist_curr_to_neigh = instance.euclidean_distance(node, 
                                                              neighbor)
+                #dist_curr_to_neigh = 1
                 if instance.heuristic == "penalty":
                     dist_curr_to_neigh += instance.penalty_func(node, neighbor,
                                                                 agent)
                 new_g_cost = g + dist_curr_to_neigh
-                #new_g_cost = g + 1
-                new_h_cost = instance.euclidean_distance(neighbor, end_node)
+                new_h_cost = instance.euclidean_distance(neighbor, start_node)
                 new_f_cost = new_g_cost + new_h_cost
                 open_neighbor = find_in_open(open_heap, neighbor)
                 if not open_neighbor == None:

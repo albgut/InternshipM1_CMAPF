@@ -75,6 +75,24 @@ class Configuration:
                     return False
         return True
     
+    def change_pos(self, num_agent, new_agent_position):
+        """
+        Change the position of an agent in the configuration.
+
+        Parameters
+        ----------
+        num_agent : int
+            The index of the current agent.
+        new_agent_position : int
+            The index of the node of the new position.
+
+        Returns
+        -------
+        None.
+
+        """
+        self.l_config[num_agent] = new_agent_position
+    
 
     def add_agent(self, agent_position):
         """
@@ -175,6 +193,9 @@ class Configuration:
                 if node_1 > node_2:
                     return False
         return False
+    
+    def __hash__(self):
+        return hash(tuple(self.l_config))
     
 if __name__ == "__main__":
     c = Configuration([1, 2, 3, 4])

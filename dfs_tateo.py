@@ -296,6 +296,8 @@ def compute_h(instance, current_config, partial_config):
         The h cost of the partial configuration.
 
     """
+    if instance.heuristic == "HOP":
+        return hop_h_cost(instance, current_config, partial_config)
     h_cost = 0
     for num_agent in range(partial_config.nb_agent):
         agent_current_node = partial_config.get_agent_pos(num_agent)
@@ -308,6 +310,33 @@ def compute_h(instance, current_config, partial_config):
         h_cost += instance.get_distance(agent_current_node, 
                                         agent_goal_node, num_agent)
     return h_cost
+
+def hop_h_cost(instance, current_config, partial_config):
+    """
+    TODO
+    """
+    nb_rollout = 10
+    final_h_cost = 0
+    #print("\nnew HOP\n")
+    for i in range(nb_rollout):
+        new_inst = instance.sample()
+        #print(new_inst.agent_graph.es["proba"])
+        h_cost = 0
+        for num_agent in range(partial_config.nb_agent):
+            agent_current_node = partial_config.get_agent_pos(num_agent)
+            agent_goal_node = new_inst.config_end.get_agent_pos(num_agent)
+            h_cost += new_inst.get_distance(agent_current_node, 
+                                            agent_goal_node, num_agent)
+        for num_agent in range(partial_config.nb_agent, 
+                               current_config.nb_agent):
+            agent_current_node = current_config.get_agent_pos(num_agent)
+            agent_goal_node = new_inst.config_end.get_agent_pos(num_agent)
+            h_cost += new_inst.get_distance(agent_current_node, 
+                                            agent_goal_node, num_agent)
+        #print(h_cost)
+        final_h_cost += h_cost
+    return final_h_cost / nb_rollout
+        
 
 def isConnected(instance, config):
     """

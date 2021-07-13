@@ -18,7 +18,7 @@ class Grid:
             The height of the grid.
         -w : int
             The weight of the grid.
-        -graph_m : Graph
+        -graphe_m : Graph
             The grid on a graph form.
     """
     

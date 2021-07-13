@@ -250,6 +250,22 @@ A class to represent all the data of the problem :
                     return m.inf
                 else:
                     return cost
+                """
+                TODO do better
+                """
+            if self.heuristic == "HOP":
+                print("ERRR")
+                sum_of_cost = 0
+                nb_tries = 1000
+                for i in range(nb_tries):
+                    new_inst = self.copy()
+                    new_inst.agent_graph = new_inst.generate_deterministic(
+                        new_inst.agent_graph)
+                    new_inst.heuristic = "astar"
+                    sum_of_cost += new_inst.get_distance(node_1, node_2)
+                if sum_of_cost == 0:
+                    return m.inf
+                return sum_of_cost / nb_tries
         return self.matrix_distance[node_1][node_2]
     
 
@@ -324,9 +340,7 @@ A class to represent all the data of the problem :
         """
         edge = self.agent_graph.get_eid(node_1, node_2)
         proba_edge = self.agent_graph.es[edge]["proba"]
-        #s = str(agent)
         if proba_edge == 0:
-            #print(s + " : 0")
             return 0
         m_x, m_y = self.midpoint(node_1, node_2)
         goal_node = self.config_end.get_agent_pos(agent)
@@ -335,8 +349,20 @@ A class to represent all the data of the problem :
                               (m_y - g_y)*(m_y - g_y))
         power = - m.log(1 - proba_edge)
         res = (dist_to_term / (1 - proba_edge)) ** power
-        #print(s + " : " + str(res))
         return res
+    
+    def sample(self):
+        """
+        TODO
+        """
+        new_inst = self.copy()
+        new_inst.heuristic = "astar"
+        state = r.getstate()
+        r.seed()
+        new_inst.agent_graph = new_inst.generate_deterministic(
+            new_inst.agent_graph.copy())
+        r.setstate(state)
+        return new_inst
         
     
     """
@@ -495,3 +521,11 @@ if __name__ == "__main__":
     print(d.get_distance(0, 3))
     print(d.matrix_distance)
     print(d.edge_present(0, 3))
+    for i in range(10):
+        print(i)
+        d2 = d.sample()
+        print(d.deterministic_graph)
+        print(d2.agent_graph)
+        #assert(d.deterministic_graph.es == d2.agent_graph.es)
+        print(d.agent_graph.es["proba"])
+        print(d2.agent_graph.es["proba"])
