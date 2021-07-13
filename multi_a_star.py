@@ -44,6 +44,8 @@ def a_star_multi(instance):
     while not open_heap == []:
         (f, h, g), current_config = heappop(open_heap)
         closed_set.add(current_config)
+        if not isConnected(instance, current_config):
+            continue
         if current_config == config_end:
             return build_path(previous_config, config_end)
         l_configs = next_configs(graphe, current_config)
@@ -124,6 +126,38 @@ def cost_step(instance, current_config, next_config):
                                             next_config.get_agent_pos(agent))
     return cost
 
+def isConnected(instance, config):
+    """
+    Verify if all the agent in the configuration are connected.
+
+    Parameters
+    ----------
+    instance : Instance
+        An object with all informations about the instance.
+    config : Configuration
+        The configuration to verify.
+
+    Returns
+    -------
+    bool
+        True if the configuration is connected, False otherwise.
+
+    """
+    stack = [0]
+    agent = [False] * instance.config_start.nb_agent
+    agent[0] = True
+    count = 1
+    while not len(stack) == 0:
+        num_agent = stack.pop()
+        for neighbor in instance.comm_graph.neighbors(
+                config.get_agent_pos(num_agent)):
+            for i in range(config.nb_agent):
+                if config.get_agent_pos(i) == neighbor and not agent[i]:
+                    agent[i] = True
+                    count += 1
+                    stack.append(i)
+    return count == config.nb_agent
+
 def next_configs(graph, config):
     """
     Generate the list of all the possible next configurations from the 
@@ -194,8 +228,6 @@ def build_path(previous_config, config_end):
         The shortest path from starting configuration and anding configuration.
 
     """
-    for c in previous_config.keys():
-        print(c, " : ", previous_config[c])
     current_config = config_end
     path = [config_end]
     while True:
