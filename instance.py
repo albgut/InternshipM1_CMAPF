@@ -12,6 +12,7 @@ import math as m
 
 from configuration import *
 from astar import *
+import multi_a_star
 
 
 class Instance:
@@ -244,6 +245,8 @@ A class to represent all the data of the problem :
             if self.heuristic == "astar":
                 if a_star(self, node_1, node_2) == -1:
                     return m.inf
+            if self.heuristic == "rrastar":
+                return multi_a_star.rra_star(self, node_1, node_2)
             if self.heuristic == "penalty":
                 cost = a_star(self, node_1, node_2, agent)
                 if cost == -1:

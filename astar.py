@@ -51,9 +51,9 @@ def a_star(instance, start_node, end_node, agent=None):
             edge_id = graphe.get_eid(node, neighbor)
             #if not graphe.es[edge_id]["proba"] == 1:
             if not neighbor in closed_set:
-                dist_curr_to_neigh = instance.euclidean_distance(node, 
-                                                             neighbor)
-                #dist_curr_to_neigh = 1
+                #dist_curr_to_neigh = instance.euclidean_distance(node, 
+                #                                             neighbor)
+                dist_curr_to_neigh = 1
                 if instance.heuristic == "penalty":
                     dist_curr_to_neigh += instance.penalty_func(node, neighbor,
                                                                 agent)

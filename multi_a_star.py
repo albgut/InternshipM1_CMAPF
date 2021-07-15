@@ -15,7 +15,40 @@ from grid_generation import *
 
 from instance import *
 
-def a_star(instance, start_node, end_node, reserved, beggin=False):
+def rra_star(instance, start_node, end_node):
+    graphe = instance.agent_graph
+    open_heap = []
+    closed_set = set()
+    #((f,h,g),node)
+    h_cost = instance.euclidean_distance(start_node, end_node)
+    heappush(open_heap, ((h_cost, h_cost, 0), end_node))
+    while not open_heap == []:
+        (f, h, g), node = heappop(open_heap)
+        closed_set.add(node)
+        instance.add_distance(end_node, node, g)
+        if node == start_node:
+            return g
+        ens_neighbors = graphe.neighbors(node)
+        for neighbor in ens_neighbors:
+            if not neighbor in closed_set:
+                dist_curr_to_neigh = instance.euclidean_distance(node, 
+                                                                 neighbor)
+                new_g_cost = g + dist_curr_to_neigh
+                new_h_cost = instance.euclidean_distance(neighbor, start_node)
+                new_f_cost = new_g_cost + new_h_cost
+                open_neighbor = find_in_open(open_heap, neighbor)
+                if not open_neighbor == None:
+                    (old_f, old_h, old_g), _ = open_neighbor
+                    if new_g_cost < old_g:
+                        open_neighbor = ((new_g_cost + new_h_cost,
+                                          new_h_cost, new_g_cost), neighbor)
+                else:
+                    open_neighbor = ((new_g_cost + new_h_cost,
+                                      new_h_cost, new_g_cost), neighbor)
+                heappush(open_heap, open_neighbor)
+    return None
+
+def a_star(instance, start_node, end_node, reserved, max_time):
     """
     TODO
     """
@@ -24,33 +57,38 @@ def a_star(instance, start_node, end_node, reserved, beggin=False):
     closed_set = set()
     previous_node = dict()
     #((f,h,g),config)
-    h_cost = instance.manhattan_distance(start_node, end_node)
-    heappush(open_heap, ((h_cost, h_cost, 0), start_node))
-    previous_node[start_node] = None
     time = 0
+    h_cost = instance.euclidean_distance(start_node, end_node)
+    heappush(open_heap, ((h_cost, h_cost, 0, time), start_node))
+    previous_node[start_node] = None
     while not open_heap == []:
-        time += 1
-        (f, h, g), current_node = heappop(open_heap)
+        print(open_heap)
+        (f, h, g, t), current_node = heappop(open_heap)
         closed_set.add(current_node)
         if current_node == end_node:
             return build_path(previous_node, end_node)
-        l_nodes = next_nodes_ca(instance, current_node, time, reserved, beggin)
+        time = t + 1
+        l_nodes = next_nodes_ca(instance, current_node, time, reserved, max_time)
+        print(current_node, " at time ", t, " = ", l_nodes)
         for next_node in l_nodes:
             if not next_node in closed_set:
-                new_g_cost = g + instance.manhattan_distance(current_node, 
+                new_g_cost = g + instance.euclidean_distance(current_node, 
                                                              next_node)
-                new_h_cost = instance.manhattan_distance(next_node, end_node)
+                #new_h_cost = instance.manhattan_distance(next_node, end_node)
+                new_h_cost = instance.get_distance(next_node, end_node)
                 new_f_cost = new_g_cost + new_h_cost
                 open_neighbor = find_in_open(open_heap, next_node)
                 if not open_neighbor == None:
-                    (old_f, old_h, old_g), _ = open_neighbor
+                    (old_f, old_h, old_g, old_t), _ = open_neighbor
                     if new_g_cost < old_g:
                         open_neighbor = ((new_f_cost,
-                                          new_h_cost, new_g_cost), next_node)
+                                          new_h_cost, new_g_cost, time), 
+                                         next_node)
+                        previous_node[next_node] = current_node
                 else:
                     open_neighbor = ((new_f_cost,
-                                      new_h_cost, new_g_cost), next_node)
-                previous_node[next_node] = current_node
+                                      new_h_cost, new_g_cost, time), next_node)
+                    previous_node[next_node] = current_node
                 heappush(open_heap, open_neighbor)
     print("Cannot find a path")
     return None
@@ -163,7 +201,7 @@ def cost_step(instance, current_config, next_config):
     """
     cost = 0
     for agent in range(current_config.nb_agent):
-        cost += instance.manhattan_distance(current_config.get_agent_pos(agent), 
+        cost += instance.euclidean_distance(current_config.get_agent_pos(agent), 
                                             next_config.get_agent_pos(agent))
     return cost
 
@@ -306,60 +344,112 @@ def compute_distance(instance, config_start, config_end):
         cost += instance.manhattan_distance(node_start, node_end)
     return cost
 
+def init_table(instance):
+    """
+    TODO
+    """
+    table = [[None for i in range(len(instance.agent_graph.vs))] 
+             for j in range(len(instance.agent_graph.vs))]
+    
+def get_distance_in_table(start_node, end_node):
+    return 5
+
 def h_c_a_star(instance):
     """
     TODO
     """
     reserved = set()
+    #table = init_table(instance)
     path = [0] * instance.config_start.nb_agent
+    max_time = 0
     for agent in range(instance.config_start.nb_agent):
-        path[agent] = plan_path(instance, agent, reserved)
+        print("max time = ", max_time)
+        path[agent] = plan_path(instance, agent, reserved, max_time - 1)
+        if len(path[agent]) > max_time:
+            max_time = len(path[agent])
     return path
 
-def plan_path(instance, agent, reserved):
+def plan_path(instance, agent, reserved, max_time):
     """
     TODO
     """
-    if agent == 0:
-        path = a_star(instance, instance.config_start.get_agent_pos(agent),
-                      instance.config_end.get_agent_pos(agent), reserved, True)
-    else:
-        path = a_star(instance, instance.config_start.get_agent_pos(agent),
-                      instance.config_end.get_agent_pos(agent), reserved)
+    path = a_star(instance, instance.config_start.get_agent_pos(agent),
+                  instance.config_end.get_agent_pos(agent), reserved, max_time)
+    print("agent ", agent, " done.")
+    print(path)
     for i in range(len(path)):
         reserved.add((path[i], i))
-        
+    
     print("\nNEW RESERVED :\n")
     print(reserved, "\n")
+    
     return path
         
-def next_nodes_ca(instance, current_node, time, reserved, beggin):
+def next_nodes_ca(instance, current_node, time, reserved, max_time):
     """
-    TODO
+    TODO Si time plus grand que dans la réservation OK si connecté !
     """
     ens = instance.agent_graph.neighbors(current_node)
     ens.append(current_node)
-    if beggin:
+    if time > max_time:
         return ens
     else:
-        for node in ens:
+        for node in ens.copy():
             connected = False
-            for comm_node in instance.comm_graph.neighbors(node):
+            ens_comm = instance.comm_graph.neighbors(node)
+            ens_comm.append(node)
+            for comm_node in ens_comm:
                 if (comm_node, time) in reserved:
+                    print("validate ", node, " with ", comm_node, " at ", time)
                     connected = True
                     break
             if not connected:
                 ens.remove(node)
         return ens
+    
+    
+def toConfig(path):
+    """
+    Change the path from a list of paths to a list of Configurations.
+
+    Parameters
+    ----------
+    path : Array<Array<int>>
+        The path to change.
+
+    Returns
+    -------
+    path_config : Array<Configuration>
+        The list of Configurations.
+
+    """
+    max_len = 0
+    for i in range(len(path)):
+        if len(path[i]) > max_len:
+            max_len = len(path[i])
+    for i in range(len(path)):
+        if len(path[i]) < max_len:
+            for j in range(len(path[i]), max_len):
+                path[i].append(path[i][-1])
+    path_config = []
+    for i in range(max_len):
+        l_config = []
+        for j in range(len(path)):
+            l_config.append(path[j][i])
+        config = Configuration(l_config.copy())
+        path_config.append(config.copy())
+    return path_config
 
 if __name__ == "__main__":
     print("\tTEST FOR BT :\n")
     g = Grid(10, 10)
     graph = g.graphe_m
-    config_start = Configuration([0, 1])
-    config_end = Configuration([99, 98])
+    config_start = Configuration([2, 1, 0])
+    config_end = Configuration([97, 98, 99])
     i = Instance(graph, graph, config_start, config_end, "astar")
     i.print_grid()
+    i.agent_graph = i.deterministic_graph
+    i.comm_graph = i.deterministic_graph
     print()
     res = next_configs(graph, Configuration([32, 33]))
     v = 0
@@ -373,7 +463,10 @@ if __name__ == "__main__":
     d[Configuration([1, 2])] = Configuration([8, 9])
     for key in d.keys():
         print(key, ", ", d[key])
-        
+    
+    i2 = i.copy()
+    i2.heuristic = "rrastar"
+    """
     print("\n\tTEST ASTAR MULTI :\n")
     t_s = t.perf_counter()
     l = a_star_multi(i)
@@ -382,12 +475,16 @@ if __name__ == "__main__":
     if not isinstance(l, type(None)):
         for c in l:
             print(c)
-    
+    """
     print("\n\tTEST HCASTAR :\n")
+    i2.print_grid()
     t_s = t.perf_counter()
-    l = h_c_a_star(i)
+    l = h_c_a_star(i2)
     t_end = t.perf_counter()
     print("it tooks ", t_end - t_s, "s.")
+    l = toConfig(l)
+    print(len(l))
     if not isinstance(l, type(None)):
         for c in l:
             print(c)
+    i2.print_grid()

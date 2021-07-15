@@ -122,10 +122,10 @@ def find_best_child(instance, current_config, closed, start_time):
             for node in successors:
                 new_config = partial_config.copy()
                 new_config.add_agent(node)
-                g_cost = current_g + instance.euclidean_distance(
-                    current_config.get_agent_pos(num_agent), node)
-                #g_cost = current_g + compute_distance(
+                #g_cost = current_g + instance.euclidean_distance(
                 #    current_config.get_agent_pos(num_agent), node)
+                g_cost = current_g + compute_distance(
+                    current_config.get_agent_pos(num_agent), node)
                 h_cost = compute_h(instance, current_config, new_config)
                 if not h_cost == m.inf and not g_cost == m.inf:
                     item = Heap_item((h_cost + g_cost, - g_cost, 
