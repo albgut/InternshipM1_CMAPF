@@ -16,6 +16,7 @@ import math as m
 import time as t
 
 from grid_generation import *
+import repeated_tateo
 
 from instance import *
 
@@ -473,7 +474,7 @@ def repeated_h_c_a_star(instance):
     while True:
         current_config = path[0]
         next_config = path[1]
-        if update_graph(instance, current_config, next_config):
+        if repeated_tateo.update_graph(instance, current_config, next_config):
             block = True
         path.pop(0)
         final_path.append(current_config.copy())
@@ -492,85 +493,6 @@ def repeated_h_c_a_star(instance):
         final_path.append(instance.config_end)
         return final_path
     
-"""
-Update the knowledge of the graph for the agent from a current configuration
-The incomming edges that are not present in the deterministic graph are deleted
-return true if the current path followed is blocked, false otherwise
-"""            
-def update_graph(instance, current_config, next_config):
-    """
-    Update the agent graph attribute of the instance with the new knowledge
-    from the current configuration. Verify if the next configuration in the 
-    graph is a valid movement, if it is it returns False and 
-    if it is not valid, it returns True.
-
-    Parameters
-    ----------
-    instance : Instance
-        An object with all informations about the instance.
-    current_config : Configuration
-        The current configuration.
-    next_config : Configuration
-        The next configuration in the path.
-
-    Returns
-    -------
-    path_block : bool
-        True if the path is blocked, False otherwise.
-
-    """
-    graph_change = False
-    path_block = False
-    for agent in range(current_config.nb_agent):
-        node = current_config.get_agent_pos(agent)
-        edge_to_delete = []
-        #The node of the same agent at the next configuration could be deleted 
-        #before : have to verify.
-        next_node = next_config.get_agent_pos(agent)
-        found_next_position = (node == next_node)
-        for neighbor in instance.agent_graph.neighbors(node):
-            if next_node == neighbor:
-                found_next_position = True
-            if not instance.edge_present(node, neighbor):
-                graph_change = True
-                edge = instance.agent_graph.get_eid(node, neighbor)
-                edge_to_delete.append(edge)
-                if is_in_next_move(node, neighbor, current_config, next_config):
-                    path_block = True
-        instance.agent_graph.delete_edges(edge_to_delete)
-        if not found_next_position:
-            path_block = True
-    if graph_change:
-        instance.clear_distance()
-    return path_block
-    
-def is_in_next_move(node, neighbor, current_config, next_config):
-    """
-    Verify if the movement node to neighbor is one of the next move possible.
-
-    Parameters
-    ----------
-    node : int
-        The index of the current node.
-    neighbor : int
-        The index of the next node in the path.
-    current_config : Configuration
-        The current configuration.
-    next_config : Configuration
-        The next configuration in the path.
-
-    Returns
-    -------
-    bool
-        True if the move node->neighbor is one of the next move possible, 
-        False otherwise.
-
-    """
-    for agent in range(current_config.nb_agent):
-        if current_config.get_agent_pos(agent) == node and \
-            next_config.get_agent_pos(agent) == neighbor:
-                return True
-    return False
 
 
 
