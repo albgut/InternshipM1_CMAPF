@@ -57,7 +57,7 @@ def test_repeated_online(grid_length, seed=r.randint(0, 10000)):
     """
     instance1 = Instance(movement_graph, comm_graph, 
                      config_start, config_end, "astar", seed=seed)
-    instance1.comm_graph = instance1.deterministic_graph
+    #instance1.comm_graph = instance1.deterministic_graph
     instance2 = instance1.copy()
     instance3 = instance1.copy()
     instance3.heuristic = "penalty"
@@ -65,7 +65,7 @@ def test_repeated_online(grid_length, seed=r.randint(0, 10000)):
     instance4.heuristic = "HOP"
     instance5 = instance1.copy()
     instance5.heuristic = "rrastar"
-    instance5.agent_graph = instance5.deterministic_graph
+    #instance5.agent_graph = instance5.deterministic_graph
     
     print("ALL DATA COMPUTED")
     
@@ -100,8 +100,8 @@ def test_repeated_online(grid_length, seed=r.randint(0, 10000)):
     """
     
     t_start = t.perf_counter()
-    path_hca = multi_a_star.h_c_a_star(instance5)
-    path_hca = multi_a_star.toConfig(path_hca)
+    path_hca = multi_a_star.repeated_h_c_a_star(instance5)
+    #path_hca = multi_a_star.toConfig(path_hca)
     t_end = t.perf_counter()
     t_hca = t_end - t_start
     print("result from h_ca* :")
@@ -122,7 +122,7 @@ def test_repeated_online(grid_length, seed=r.randint(0, 10000)):
             #assert(len(path_online) == len(path_repeated_tateo))
     print()
     
-    min_time = min(t_online, t_penalty, t_repeated_tateo)
+    min_time = min(t_online, t_penalty, t_repeated_tateo, t_hca)
     
     s = "Min time = "
     if min_time == t_online:
@@ -131,11 +131,13 @@ def test_repeated_online(grid_length, seed=r.randint(0, 10000)):
         s += "penalty "
     if min_time == t_repeated_tateo:
         s += "repeated "
+    if min_time == t_repeated_tateo:
+        s += "hca "    
     print(s)
     res = ""
     s = "\nMin path = "
     min_path = min(len(path_penalty), len(path_online), 
-                   len(path_repeated_tateo))
+                   len(path_repeated_tateo), len(path_hca))
     if min_path == len(path_online):
         s += "online "
         res += "O"
@@ -145,8 +147,23 @@ def test_repeated_online(grid_length, seed=r.randint(0, 10000)):
     if min_path == len(path_repeated_tateo):
         s += "repeated "
         res += "R"
+    if min_path == len(path_hca):
+        s += "hca "
+        res += "H"
     print(s)
     return res
+
+def comm_graph_range(length, i_range):
+    """
+    TODO
+    """
+    graph = ig.Graph(length)
+    for i in range(graph.vs):
+        graph.add_vertices(dfs_range(graph, i_range))
+    return graph
+
+def dfs_range(graph, i_range):
+    return 5
 
 def print_result(time, path):
     """
@@ -173,6 +190,7 @@ def print_result(time, path):
         print("No path found")
 
 if __name__ == "__main__":
+    """
     test_repeated_online(10)
     """
     res = ""
@@ -189,4 +207,4 @@ if __name__ == "__main__":
             nb += 1
         result.append((nb,curr))
     print(result)
-    """
+    

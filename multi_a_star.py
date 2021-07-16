@@ -6,6 +6,10 @@ Created on Fri Jul  9 14:48:42 2021
 @author: algutier
 """
 
+"""
+TODO PROBA !
+"""
+
 import igraph as ig
 from heapq import *
 import math as m
@@ -16,6 +20,9 @@ from grid_generation import *
 from instance import *
 
 def rra_star(instance, start_node, end_node):
+    """
+    TODO
+    """
     graphe = instance.agent_graph
     open_heap = []
     closed_set = set()
@@ -62,14 +69,14 @@ def a_star(instance, start_node, end_node, reserved, max_time):
     heappush(open_heap, ((h_cost, h_cost, 0, time), start_node))
     previous_node[start_node] = None
     while not open_heap == []:
-        print(open_heap)
+        #print(open_heap)
         (f, h, g, t), current_node = heappop(open_heap)
         closed_set.add(current_node)
         if current_node == end_node:
             return build_path(previous_node, end_node)
         time = t + 1
         l_nodes = next_nodes_ca(instance, current_node, time, reserved, max_time)
-        print(current_node, " at time ", t, " = ", l_nodes)
+        #print(current_node, " at time ", t, " = ", l_nodes)
         for next_node in l_nodes:
             if not next_node in closed_set:
                 new_g_cost = g + instance.euclidean_distance(current_node, 
@@ -363,7 +370,7 @@ def h_c_a_star(instance):
     path = [0] * instance.config_start.nb_agent
     max_time = 0
     for agent in range(instance.config_start.nb_agent):
-        print("max time = ", max_time)
+        #print("max time = ", max_time)
         path[agent] = plan_path(instance, agent, reserved, max_time - 1)
         if len(path[agent]) > max_time:
             max_time = len(path[agent])
@@ -375,13 +382,13 @@ def plan_path(instance, agent, reserved, max_time):
     """
     path = a_star(instance, instance.config_start.get_agent_pos(agent),
                   instance.config_end.get_agent_pos(agent), reserved, max_time)
-    print("agent ", agent, " done.")
-    print(path)
+    #print("agent ", agent, " done.")
+    #print(path)
     for i in range(len(path)):
         reserved.add((path[i], i))
     
-    print("\nNEW RESERVED :\n")
-    print(reserved, "\n")
+    #print("\nNEW RESERVED :\n")
+    #print(reserved, "\n")
     
     return path
         
@@ -400,7 +407,7 @@ def next_nodes_ca(instance, current_node, time, reserved, max_time):
             ens_comm.append(node)
             for comm_node in ens_comm:
                 if (comm_node, time) in reserved:
-                    print("validate ", node, " with ", comm_node, " at ", time)
+                    #print("validate ", node, " with ", comm_node, " at ", time)
                     connected = True
                     break
             if not connected:
@@ -440,16 +447,143 @@ def toConfig(path):
         path_config.append(config.copy())
     return path_config
 
+##############################################################################
+#                              TODO move in another file
+##############################################################################
+
+def repeated_h_c_a_star(instance):
+    """
+    TODO
+
+    """
+    path = toConfig(h_c_a_star(instance))
+    if isinstance(path, type(None)):
+        #No path found
+        return None
+    final_path = []
+    block = False
+    
+    """
+    print("NEW HCA :")
+    for c in path:
+        print(c)
+    """
+    
+    
+    while True:
+        current_config = path[0]
+        next_config = path[1]
+        if update_graph(instance, current_config, next_config):
+            block = True
+        path.pop(0)
+        final_path.append(current_config.copy())
+        if next_config.same(instance.config_end) or block:
+            break
+        
+    if block:
+        new_start_config = final_path.pop(-1)
+        instance.new_start(new_start_config)
+        next_path = repeated_h_c_a_star(instance)
+        if isinstance(next_path, type(None)):
+            return None
+        else:
+            return final_path + next_path
+    else :
+        final_path.append(instance.config_end)
+        return final_path
+    
+"""
+Update the knowledge of the graph for the agent from a current configuration
+The incomming edges that are not present in the deterministic graph are deleted
+return true if the current path followed is blocked, false otherwise
+"""            
+def update_graph(instance, current_config, next_config):
+    """
+    Update the agent graph attribute of the instance with the new knowledge
+    from the current configuration. Verify if the next configuration in the 
+    graph is a valid movement, if it is it returns False and 
+    if it is not valid, it returns True.
+
+    Parameters
+    ----------
+    instance : Instance
+        An object with all informations about the instance.
+    current_config : Configuration
+        The current configuration.
+    next_config : Configuration
+        The next configuration in the path.
+
+    Returns
+    -------
+    path_block : bool
+        True if the path is blocked, False otherwise.
+
+    """
+    graph_change = False
+    path_block = False
+    for agent in range(current_config.nb_agent):
+        node = current_config.get_agent_pos(agent)
+        edge_to_delete = []
+        #The node of the same agent at the next configuration could be deleted 
+        #before : have to verify.
+        next_node = next_config.get_agent_pos(agent)
+        found_next_position = (node == next_node)
+        for neighbor in instance.agent_graph.neighbors(node):
+            if next_node == neighbor:
+                found_next_position = True
+            if not instance.edge_present(node, neighbor):
+                graph_change = True
+                edge = instance.agent_graph.get_eid(node, neighbor)
+                edge_to_delete.append(edge)
+                if is_in_next_move(node, neighbor, current_config, next_config):
+                    path_block = True
+        instance.agent_graph.delete_edges(edge_to_delete)
+        if not found_next_position:
+            path_block = True
+    if graph_change:
+        instance.clear_distance()
+    return path_block
+    
+def is_in_next_move(node, neighbor, current_config, next_config):
+    """
+    Verify if the movement node to neighbor is one of the next move possible.
+
+    Parameters
+    ----------
+    node : int
+        The index of the current node.
+    neighbor : int
+        The index of the next node in the path.
+    current_config : Configuration
+        The current configuration.
+    next_config : Configuration
+        The next configuration in the path.
+
+    Returns
+    -------
+    bool
+        True if the move node->neighbor is one of the next move possible, 
+        False otherwise.
+
+    """
+    for agent in range(current_config.nb_agent):
+        if current_config.get_agent_pos(agent) == node and \
+            next_config.get_agent_pos(agent) == neighbor:
+                return True
+    return False
+
+
+
 if __name__ == "__main__":
     print("\tTEST FOR BT :\n")
     g = Grid(10, 10)
     graph = g.graphe_m
-    config_start = Configuration([2, 1, 0])
-    config_end = Configuration([97, 98, 99])
+    config_start = Configuration([0, 1, 2])
+    config_end = Configuration([99, 98, 97])
     i = Instance(graph, graph, config_start, config_end, "astar")
     i.print_grid()
-    i.agent_graph = i.deterministic_graph
-    i.comm_graph = i.deterministic_graph
+    #i.agent_graph = i.deterministic_graph
+    i.comm_graph = i.agent_graph.copy()
     print()
     res = next_configs(graph, Configuration([32, 33]))
     v = 0
@@ -487,4 +621,17 @@ if __name__ == "__main__":
     if not isinstance(l, type(None)):
         for c in l:
             print(c)
+    
+    print("\n\tTEST HCASTAR :\n")
     i2.print_grid()
+    t_s = t.perf_counter()
+    l = repeated_h_c_a_star(i2)
+    t_end = t.perf_counter()
+    print("it tooks ", t_end - t_s, "s.")
+    print(len(l))
+    if not isinstance(l, type(None)):
+        for c in l:
+            print(c)
+    
+    i2.print_grid()
+    
