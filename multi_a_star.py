@@ -56,7 +56,7 @@ def rra_star(instance, start_node, end_node):
                 heappush(open_heap, open_neighbor)
     return None
 
-def a_star(instance, start_node, end_node, reserved, max_time):
+def a_star(instance, start_node, end_node, reserved, max_time, w):
     """
     TODO
     """
@@ -358,11 +358,8 @@ def init_table(instance):
     """
     table = [[None for i in range(len(instance.agent_graph.vs))] 
              for j in range(len(instance.agent_graph.vs))]
-    
-def get_distance_in_table(start_node, end_node):
-    return 5
 
-def h_c_a_star(instance):
+def h_c_a_star(instance, w=m.inf):
     """
     TODO
     """
@@ -372,7 +369,7 @@ def h_c_a_star(instance):
     max_time = 0
     for agent in range(instance.config_start.nb_agent):
         #print("max time = ", max_time)
-        path[agent] = plan_path(instance, agent, reserved, max_time - 1)
+        path[agent] = plan_path(instance, agent, reserved, max_time - 1, w)
         if len(path[agent]) > max_time:
             max_time = len(path[agent])
     return path
@@ -382,7 +379,8 @@ def plan_path(instance, agent, reserved, max_time):
     TODO
     """
     path = a_star(instance, instance.config_start.get_agent_pos(agent),
-                  instance.config_end.get_agent_pos(agent), reserved, max_time)
+                  instance.config_end.get_agent_pos(agent), reserved, 
+                  max_time, w)
     #print("agent ", agent, " done.")
     #print(path)
     for i in range(len(path)):
